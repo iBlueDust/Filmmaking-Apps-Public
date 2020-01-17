@@ -9,8 +9,14 @@
 </template>
 
 <style>
+@import "./assets/fonts/fonts.css";
+
+* {
+  font-family: "Bebas Neue", Helvetica, Arial, sans-serif;
+}
+
 #app {
-  font-family: "Avenir", Helvetica, Arial, sans-serif;
+  text-transform: uppercase;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
