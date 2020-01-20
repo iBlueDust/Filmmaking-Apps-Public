@@ -32,8 +32,8 @@ export default Vue.extend({
 <style scoped>
 .container {
   background: url("../assets/drawable/bumpy_circle.svg");
-  background-size: 125vw;
-  background-position: 12.5% 6%;
+  background-position-x: 101%;
+  background-position-y: 101%;
   background-repeat: no-repeat;
   position: relative;
   min-height: 35vh;
@@ -42,13 +42,14 @@ export default Vue.extend({
 h1 {
   font-size: 7rem;
   margin: 0 0 16px 32px;
-  align-items: flex-end;
+  align-items: center;
   display: flex;
 }
 
 h1 > img {
   display: inline-block;
-  height: 86px;
+  height: 70px;
+  margin: 0 16px;
 }
 
 h1.dislike {
@@ -56,9 +57,9 @@ h1.dislike {
   color: white;
   text-align: right;
   position: absolute;
-  padding: 0 32px;
   border-top-left-radius: 64px;
   border-bottom-left-radius: 64px;
+  padding-right: 32px;
   bottom: 0;
   right: 0;
 }

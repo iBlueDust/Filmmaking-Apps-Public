@@ -6,7 +6,7 @@
       :vertical="true"
       :autoPlay="true"
       :playSpeed="2000"
-      :itemsToShow="5"
+      :itemsToShow="4"
       :centerMode="true"
       :infiniteScroll="true"
     >
@@ -35,8 +35,8 @@ export default Vue.extend({
 <style>
 .hooper.panel .panel-item {
   text-align: center;
-  font-size: 1.75rem;
-  padding: 8px 64px 8px 16px;
+  font-size: 1.5rem;
+  padding: 8px 16px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -45,19 +45,20 @@ export default Vue.extend({
 
 <style scoped>
 .container {
-  display: grid;
-  grid-template-rows: auto 1fr;
+  display: flex;
+  flex-direction: column;
+  margin: 32px;
 }
 
 h3 {
-  font-size: 2.5rem;
-  margin: 64px 32px 8px;
+  font-size: 2.75rem;
+  margin: 0 32px 0 0;
+  flex: 0 0 auto;
 }
 
 .panel {
   list-style-type: none;
-  margin: 16px 0 16px 32px;
   background: #c7d0d8be;
-  height: auto;
+  flex: 1 0 auto;
 }
 </style>

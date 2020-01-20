@@ -33,7 +33,7 @@ export default Vue.extend({
   }),
   computed: {
     image() {
-      return "https://images.pexels.com/photos/3552948/pexels-photo-3552948.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940";
+      return "https://images.pexels.com/photos/3380967/pexels-photo-3380967.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940";
     }
   }
 });
@@ -42,8 +42,10 @@ export default Vue.extend({
 <style>
 @import "./assets/fonts/fonts.css";
 
+html,
 body {
-  height: 100vh;
+  height: 100%;
+  overflow: none;
   margin: 0;
 }
 
@@ -60,7 +62,7 @@ h5 {
 
 <style scope>
 #app {
-  height: 100vh;
+  height: 100%;
   font-family: "Open Sans", Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -72,7 +74,7 @@ h5 {
 }
 
 .panel-container.horizontal {
-  grid-template-columns: 3fr 2fr;
+  grid-template-columns: 1fr 400px;
   grid-template-rows: auto;
 }
 
@@ -103,23 +105,18 @@ h5 {
 }
 
 article.biography {
-  margin: 64px;
+  margin: 32px auto;
   padding: 8px 16px;
-  font-size: 10px;
+  font-size: 12px;
   background: #c7d0d8be;
   text-align: center;
+  max-width: 40vw;
 }
 
 main.panel {
-  display: flex;
-  flex-flow: column nowrap;
-}
-
-.charges {
-  flex: 4 1 auto;
-}
-
-.stats {
-  flex: 1 0 auto;
+  height: 100%;
+  display: grid;
+  grid-template-rows: 1fr auto;
+  flex-direction: column;
 }
 </style>
