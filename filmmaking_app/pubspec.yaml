@@ -10,8 +10,13 @@ dependencies:
     sdk: flutter
 
   cupertino_icons: ^0.1.2
-  flutter_svg: ^0.16.1
   provider: ^4.0.2
+
+  # Waiting for Web support for this package
+  # Temporarily using Flare instead to render svg on the web
+  #
+  flutter_svg: ^0.16.1
+  # flare_flutter: ^2.0.1
 
 dev_dependencies:
   flutter_test:

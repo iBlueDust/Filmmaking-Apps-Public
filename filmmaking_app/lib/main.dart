@@ -1,4 +1,3 @@
-import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'homepage.dart';
 
@@ -11,9 +10,9 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Filmmaking Flutter',
       theme: ThemeData(
-        primaryColor: Color(0xFF111111),
-        backgroundColor: Color(0xFF111111),
-        scaffoldBackgroundColor: Color(0xFF111111),
+        primaryColor: Color(0xFF141414),
+        backgroundColor: Color(0xFF141414),
+        scaffoldBackgroundColor: Color(0xFF141414),
         secondaryHeaderColor: Colors.black,
         cardColor: Colors.grey[700],
         brightness: Brightness.dark,
