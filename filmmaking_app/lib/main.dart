@@ -14,14 +14,24 @@ class MyApp extends StatelessWidget {
         backgroundColor: Color(0xFF191919),
         scaffoldBackgroundColor: Color(0xFF191919),
         secondaryHeaderColor: Color(0xFF161616),
-        cardColor: Colors.grey[700],
+        cardColor: Color(0xFF191919),
+        buttonColor: Colors.grey[700],
         brightness: Brightness.dark,
         errorColor: Colors.red,
         indicatorColor: Colors.green,
         accentColor: Colors.white,
-        fontFamily: 'BebasNeue',
         textTheme: TextTheme(
-          title: TextStyle(fontSize: 48),
+          title: TextStyle(
+            fontSize: 48,
+            fontFamily: 'BebasNeue',
+          ),
+          display3: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 18,
+          ),
+          body2: TextStyle(
+            color: Colors.grey[700],
+          ),
         ),
       ),
       home: HomePage(),

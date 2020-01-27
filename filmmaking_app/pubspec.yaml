@@ -3,7 +3,7 @@ description: A simple independent app for the final film project for Grade 10 fi
 version: 0.1.0+1000
 
 environment:
-  sdk: ">=2.1.0 <3.0.0"
+  sdk: ">=2.5.2 <3.0.0"
 
 dependencies:
   flutter:
@@ -18,6 +18,10 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+
+analyzer:
+  enable-experiment:
+    - control-flow-collections
 
 flutter:
 

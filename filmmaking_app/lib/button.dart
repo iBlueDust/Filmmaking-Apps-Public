@@ -61,38 +61,42 @@ class _LikeButtonState extends State<LikeButton> {
               //   _controller.forward();
             },
             padding: const EdgeInsets.all(0),
-            child: AnimatedContainer(
-              duration: widget.duration,
+            child: Stack(
               alignment: widget.alignment,
-              decoration: store.likeMode == widget.activeMode
-                  ? BoxDecoration(color: widget.enabledColor)
-                  : BoxDecoration(
-                      color: Colors.transparent,
-                      border: widget.border,
-                    ),
-              child: AspectRatio(
-                aspectRatio: 1,
-                child: Center(
-                  //   child: FadeTransition(
-                  //     opacity: _animation,
-                  // child: SvgPicture.asset(
-                  //   'assets/vectors/${store.likeMode == widget.activeMode ? widget.enabledIcon : widget.disabledIcon}.svg',
-                  //   width: 64,
-                  //   height: 64,
-                  // ),
-                  child: SizedBox(
-                    width: 64,
-                    height: 64,
-                    child: FlareActor(
-                      'assets/vectors/${widget.enabledIcon}.flr',
-                      alignment: Alignment.center,
-                      fit: BoxFit.contain,
-                      animation:
-                          store.likeMode == widget.activeMode ? 'on' : 'off',
+              children: <Widget>[
+                AnimatedContainer(
+                  duration: widget.duration,
+                  decoration: store.likeMode == widget.activeMode
+                      ? BoxDecoration(color: widget.enabledColor)
+                      : BoxDecoration(
+                          color: Colors.transparent,
+                          border: widget.border,
+                        ),
+                ),
+                AspectRatio(
+                  aspectRatio: 1,
+                  child: Center(
+                    //   child: FadeTransition(
+                    //     opacity: _animation,
+                    // child: SvgPicture.asset(
+                    //   'assets/vectors/${store.likeMode == widget.activeMode ? widget.enabledIcon : widget.disabledIcon}.svg',
+                    //   width: 64,
+                    //   height: 64,
+                    // ),
+                    child: SizedBox(
+                      width: 64,
+                      height: 64,
+                      child: FlareActor(
+                        'assets/vectors/${widget.enabledIcon}.flr',
+                        alignment: Alignment.center,
+                        fit: BoxFit.contain,
+                        animation:
+                            store.likeMode == widget.activeMode ? 'on' : 'off',
+                      ),
                     ),
                   ),
                 ),
-              ),
+              ],
             ),
           ),
         ),

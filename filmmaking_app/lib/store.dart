@@ -6,11 +6,27 @@ class Profile {
   String name;
   List<String> images;
   Mode mode;
+
+  Profile({this.name, this.images, this.mode});
+}
+
+class ImageData {
+  String label;
+  String src;
+
+  ImageData(label, src) {
+    this.label = label;
+    this.src = 'assets/images/$src';
+  }
 }
 
 class Store with ChangeNotifier {
   Mode _likeMode = Mode.None;
-  String _image = 'test.jpg';
+  List<ImageData> _images = [
+    ImageData('Test 1', 'test_1.jpg'),
+    ImageData('Test 2', 'test_2.jpg'),
+    ImageData('Test 3', 'test_3.jpg')
+  ];
   String _name = 'Lorem Ipsum';
 
   Mode get likeMode => _likeMode;
@@ -20,12 +36,7 @@ class Store with ChangeNotifier {
     notifyListeners();
   }
 
-  String get image => 'assets/images/$_image';
-
-  set image(String value) {
-    _image = value;
-    notifyListeners();
-  }
+  List<ImageData> get images => _images;
 
   String get name => _name;
 

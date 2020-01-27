@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'imageselectdialog.dart';
 import 'store.dart';
 import 'button.dart';
 
@@ -10,15 +11,20 @@ class ProfileSlide extends StatefulWidget {
 
 class _ProfileSlideState extends State<ProfileSlide>
     with TickerProviderStateMixin {
-  static const double _buttonOffset = 150;
+  static const double _padding = 64;
+  static const double _buttonOffsetFactor = .4;
   static const double _buttonHeight = 100;
   static const Duration _buttonDuration = Duration(milliseconds: 200);
+
+  int _imageIndex = 0;
 
   @override
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
+    final size = MediaQuery.of(context).size;
 
-    final BorderSide _grayBorder = BorderSide(color: theme.cardColor, width: 4);
+    final BorderSide _grayBorder =
+        BorderSide(color: theme.buttonColor, width: 4);
 
     return ChangeNotifierProvider(
       create: (context) => Store(),
@@ -37,9 +43,12 @@ class _ProfileSlideState extends State<ProfileSlide>
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: <Widget>[
                     Expanded(
-                      child: Image.asset(
-                        store.image,
-                        fit: BoxFit.cover,
+                      child: GestureDetector(
+                        child: Image.asset(
+                          store.images[_imageIndex].src,
+                          fit: BoxFit.cover,
+                        ),
+                        onTap: () => _showImageDialog(context, store),
                       ),
                     ),
                     SizedBox(height: 16),
@@ -58,7 +67,7 @@ class _ProfileSlideState extends State<ProfileSlide>
             activeMode: Mode.Like,
             duration: _buttonDuration,
             height: _buttonHeight,
-            width: _buttonOffset,
+            width: size.width * _buttonOffsetFactor,
             semanticLabel: "Like",
             enabledColor: theme.indicatorColor,
             alignment: Alignment.centerRight,
@@ -69,14 +78,13 @@ class _ProfileSlideState extends State<ProfileSlide>
               right: _grayBorder,
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.only(
-              left: _buttonOffset, bottom: 64, // Page bottom padding
-            ),
+          Align(
+            alignment: Alignment.centerRight,
             child: LikeButton(
               vsync: this,
               activeMode: Mode.Dislike,
               duration: _buttonDuration,
+              width: size.width * (1 - _buttonOffsetFactor),
               height: _buttonHeight,
               semanticLabel: "Dislike",
               enabledColor: theme.errorColor,
@@ -89,7 +97,18 @@ class _ProfileSlideState extends State<ProfileSlide>
               ),
             ),
           ),
+          SizedBox(height: _padding),
         ],
+      ),
+    );
+  }
+
+  void _showImageDialog(BuildContext context, Store store) {
+    showDialog(
+      context: context,
+      builder: (context) => ImageSelectDialog(
+        images: store.images,
+        onTap: (_, index) => setState(() => _imageIndex = index),
       ),
     );
   }
