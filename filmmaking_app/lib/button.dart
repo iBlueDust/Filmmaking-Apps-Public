@@ -1,12 +1,12 @@
-// import 'package:flare_flutter/flare_actor.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flare_flutter/flare_actor.dart';
+// import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'store.dart';
 
 class LikeButton extends StatefulWidget {
   final String enabledIcon;
-  final String disabledIcon;
+//   final String disabledIcon;
   final Color enabledColor;
   final Duration duration;
   final double width;
@@ -20,7 +20,7 @@ class LikeButton extends StatefulWidget {
   LikeButton({
     Key key,
     this.enabledIcon,
-    this.disabledIcon,
+    // this.disabledIcon,
     this.enabledColor,
     this.duration,
     this.width,
@@ -37,13 +37,13 @@ class LikeButton extends StatefulWidget {
 
 class _LikeButtonState extends State<LikeButton> {
   Widget build(BuildContext context) {
-    final _controller = AnimationController(
-      vsync: widget.vsync,
-      duration: widget.duration,
-    );
-    final _animation = Tween(begin: 0.0, end: 1.0).animate(_controller);
+    // final _controller = AnimationController(
+    //   vsync: widget.vsync,
+    //   duration: widget.duration,
+    // );
+    // final _animation = Tween(begin: 0.0, end: 1.0).animate(_controller);
 
-    _controller.forward();
+    // _controller.forward();
 
     return SizedBox(
       width: widget.width,
@@ -58,7 +58,7 @@ class _LikeButtonState extends State<LikeButton> {
               store.likeMode = store.likeMode == widget.activeMode
                   ? Mode.None
                   : widget.activeMode;
-              _controller.forward();
+              //   _controller.forward();
             },
             padding: const EdgeInsets.all(0),
             child: AnimatedContainer(
@@ -73,24 +73,23 @@ class _LikeButtonState extends State<LikeButton> {
               child: AspectRatio(
                 aspectRatio: 1,
                 child: Center(
-                  child: FadeTransition(
-                    opacity: _animation,
-                    child: SvgPicture.asset(
-                      'assets/vectors/${store.likeMode == widget.activeMode ? widget.enabledIcon : widget.disabledIcon}.svg',
-                      width: 64,
-                      height: 64,
+                  //   child: FadeTransition(
+                  //     opacity: _animation,
+                  // child: SvgPicture.asset(
+                  //   'assets/vectors/${store.likeMode == widget.activeMode ? widget.enabledIcon : widget.disabledIcon}.svg',
+                  //   width: 64,
+                  //   height: 64,
+                  // ),
+                  child: SizedBox(
+                    width: 64,
+                    height: 64,
+                    child: FlareActor(
+                      'assets/vectors/${widget.enabledIcon}.flr',
+                      alignment: Alignment.center,
+                      fit: BoxFit.contain,
+                      animation:
+                          store.likeMode == widget.activeMode ? 'on' : 'off',
                     ),
-                    // child: SizedBox(
-                    //   width: 64,
-                    //   height: 64,
-                    //   child: FlareActor(
-                    //     'assets/vectors/${store.likeMode == widget.activeMode ? widget.enabledIcon : widget.disabledIcon}.svg',
-                    //     alignment: Alignment.center,
-                    //     fit: BoxFit.contain,
-                    //     animation:
-                    //         store.likeMode == widget.activeMode ? 'on' : 'off',
-                    //   ),
-                    // ),
                   ),
                 ),
               ),

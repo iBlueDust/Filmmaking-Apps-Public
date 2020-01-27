@@ -62,8 +62,7 @@ class _ProfileSlideState extends State<ProfileSlide>
             semanticLabel: "Like",
             enabledColor: theme.indicatorColor,
             alignment: Alignment.centerRight,
-            enabledIcon: 'ic_heart_white',
-            disabledIcon: 'ic_heart_gray',
+            enabledIcon: 'anim_heart',
             border: Border(
               top: _grayBorder,
               bottom: _grayBorder,
@@ -82,8 +81,7 @@ class _ProfileSlideState extends State<ProfileSlide>
               semanticLabel: "Dislike",
               enabledColor: theme.errorColor,
               alignment: Alignment.centerLeft,
-              enabledIcon: 'ic_heart_dislike_white',
-              disabledIcon: 'ic_heart_dislike_gray',
+              enabledIcon: 'anim_heart_dislike',
               border: Border(
                 top: _grayBorder,
                 left: _grayBorder,

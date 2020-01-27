@@ -10,10 +10,10 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Filmmaking Flutter',
       theme: ThemeData(
-        primaryColor: Color(0xFF141414),
-        backgroundColor: Color(0xFF141414),
-        scaffoldBackgroundColor: Color(0xFF141414),
-        secondaryHeaderColor: Colors.black,
+        primaryColor: Color(0xFF191919),
+        backgroundColor: Color(0xFF191919),
+        scaffoldBackgroundColor: Color(0xFF191919),
+        secondaryHeaderColor: Color(0xFF161616),
         cardColor: Colors.grey[700],
         brightness: Brightness.dark,
         errorColor: Colors.red,
