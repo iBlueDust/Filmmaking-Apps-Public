@@ -1,0 +1,32 @@
+[
+    {
+        "name": "Lorem Ipsum",
+        "images": [
+            {
+                "label": "Test 1",
+                "src": "test_1.jpg"
+            },
+            {
+                "label": "Test 2",
+                "src": "test_2.jpg"
+            },
+            {
+                "label": "Test 4",
+                "src": "test_3.jpg"
+            }
+        ]
+    },
+    {
+        "name": "Lorem Ipsum 2",
+        "images": [
+            {
+                "label": "Test 1",
+                "src": "test_1.jpg"
+            },
+            {
+                "label": "Test 2",
+                "src": "test_2.jpg"
+            }
+        ]
+    }
+]

@@ -55,9 +55,7 @@ class _LikeButtonState extends State<LikeButton> {
           builder: (context, store, _) => FlatButton(
             splashColor: widget.enabledColor,
             onPressed: () {
-              store.likeMode = store.likeMode == widget.activeMode
-                  ? Mode.None
-                  : widget.activeMode;
+              store.mode = store.mode == widget.activeMode ? Mode.None : widget.activeMode;
               //   _controller.forward();
             },
             padding: const EdgeInsets.all(0),
@@ -66,7 +64,7 @@ class _LikeButtonState extends State<LikeButton> {
               children: <Widget>[
                 AnimatedContainer(
                   duration: widget.duration,
-                  decoration: store.likeMode == widget.activeMode
+                  decoration: store.mode == widget.activeMode
                       ? BoxDecoration(color: widget.enabledColor)
                       : BoxDecoration(
                           color: Colors.transparent,
@@ -90,8 +88,7 @@ class _LikeButtonState extends State<LikeButton> {
                         'assets/vectors/${widget.enabledIcon}.flr',
                         alignment: Alignment.center,
                         fit: BoxFit.contain,
-                        animation:
-                            store.likeMode == widget.activeMode ? 'on' : 'off',
+                        animation: store.mode == widget.activeMode ? 'on' : 'off',
                       ),
                     ),
                   ),

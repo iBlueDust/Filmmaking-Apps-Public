@@ -41,8 +41,7 @@ class ImageSelectDialog extends StatelessWidget {
               itemBuilder: (BuildContext context, int i) => i == images.length
                   ? SizedBox(height: 32) // Inline bottom padding
                   : ListTile(
-                      contentPadding:
-                          const EdgeInsets.symmetric(horizontal: 32),
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 32),
                       leading: CircleAvatar(
                         backgroundImage: AssetImage(images[i].src),
                         foregroundColor: theme.secondaryHeaderColor,
