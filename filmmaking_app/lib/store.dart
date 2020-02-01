@@ -4,38 +4,11 @@ import 'dart:math';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
-enum Mode { None, Like, Dislike }
-
-class Profile {
-  String name;
-  List<ImageData> images;
-  Mode mode = Mode.None;
-
-  Profile({this.name, this.images, this.mode});
-
-  factory Profile.fromJson(Map<String, dynamic> parsedJson) {
-    return Profile(
-        name: parsedJson['name'],
-        images: (parsedJson['images'] as List).map((image) => ImageData.fromJson(image)).toList(),
-        mode: parsedJson['mode'] ?? Mode.None);
-  }
-}
-
-class ImageData {
-  String label;
-  String src;
-
-  ImageData(label, src) {
-    this.label = label;
-    this.src = 'assets/images/$src';
-  }
-
-  factory ImageData.fromJson(Map<String, dynamic> parsedJson) {
-    return ImageData(parsedJson['label'], parsedJson['src']);
-  }
-}
+import 'classes.dart';
 
 class Store with ChangeNotifier {
+  bool _isInitialized = false;
+
   List<Profile> _profiles = [];
   int _index = 0;
   // List<ImageData> _images = [
@@ -49,8 +22,15 @@ class Store with ChangeNotifier {
     List<dynamic> list = json.decode(jsonString);
     _profiles = list.map((profile) => Profile.fromJson(profile)).toList();
 
+    _isInitialized = true;
+    notifyListeners();
+
     return true; // Add return false if the data read is invalid so the UI can inform of it
   }
+
+  bool get isInitialized => _isInitialized;
+
+  bool get isIndexValid => _profiles.length >= 0 && _index >= 0 && _index < _profiles.length;
 
   int get index => _index;
 
@@ -59,14 +39,14 @@ class Store with ChangeNotifier {
     notifyListeners();
   }
 
-  Mode get mode => _profiles[_index].mode;
+  Mode get mode => isIndexValid ? _profiles[_index].mode : Mode.None;
 
   set mode(Mode value) {
     _profiles[_index].mode = value == null ? Mode.None : value;
     notifyListeners();
   }
 
-  List<ImageData> get images => _profiles[_index].images;
+  List<ImageData> get images => isIndexValid ? _profiles[_index].images : '';
 
-  String get name => _profiles[_index].name;
+  String get name => isIndexValid ? _profiles[_index].name : '';
 }

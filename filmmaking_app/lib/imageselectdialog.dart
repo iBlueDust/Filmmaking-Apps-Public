@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'store.dart';
+import 'classes.dart';
 
 typedef ImageSelectCallback = void Function(ImageData, int);
 

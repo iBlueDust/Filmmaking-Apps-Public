@@ -6,8 +6,6 @@ import 'profileslide.dart';
 import 'store.dart';
 
 class HomePage extends StatelessWidget {
-  final _controller = PageController();
-
   Widget build(BuildContext context) {
     return Scaffold(
       body: Stack(
@@ -33,6 +31,7 @@ class HomePage extends StatelessWidget {
                 var store = Store();
 
                 // and initialize it (+ logging)
+                // TODO: Use the return value of init to show a snackbar or something
                 store
                     .init(context)
                     .then((success) => print(success ? 'Store is initialized' : 'Failed to initialize Store'));

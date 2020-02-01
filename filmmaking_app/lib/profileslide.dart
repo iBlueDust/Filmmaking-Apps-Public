@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'imageselectdialog.dart';
 import 'store.dart';
+import 'classes.dart';
 import 'button.dart';
 
 class ProfileSlide extends StatefulWidget {
@@ -40,18 +41,30 @@ class _ProfileSlideState extends State<ProfileSlide> with TickerProviderStateMix
                 children: <Widget>[
                   Expanded(
                     child: GestureDetector(
-                      child: Image.asset(
-                        store.images[_imageIndex].src,
-                        fit: BoxFit.cover,
-                      ),
+                      // Display a message if _imageIndex will cause an ArrayOutOfBoundsException
+                      child: _mainImageWidget(context, store),
                       onTap: () => _showImageDialog(context, store),
                     ),
                   ),
-                  SizedBox(height: 16),
-                  Text(
-                    store.name,
-                    style: theme.textTheme.title,
-                  ),
+                  SizedBox(height: 16), // Padding
+
+                  // Display message if Store's profile index is out of bounds
+                  if (store.isInitialized && store.isIndexValid) ...[
+                    Text(
+                      store.name,
+                      style: theme.textTheme.title,
+                    ),
+                  ] else if (store.isInitialized) ...[
+                    Text(
+                      'No profiles are available',
+                      style: theme.textTheme.subtitle,
+                    )
+                  ] else ...[
+                    Text(
+                      'Loading...',
+                      style: theme.textTheme.subtitle,
+                    )
+                  ]
                 ],
               ),
             ),
@@ -130,6 +143,24 @@ class _ProfileSlideState extends State<ProfileSlide> with TickerProviderStateMix
         ],
       ),
     );
+  }
+
+  Widget _mainImageWidget(BuildContext context, Store store) {
+    if (store.isInitialized) {
+      if (store.images == null || store.images.length <= _imageIndex || _imageIndex < 0)
+        return Center(
+          child: Text(
+            "No images are available",
+            style: Theme.of(context).textTheme.body1,
+          ),
+        );
+      else
+        return Image.asset(
+          store.images[_imageIndex].src,
+          fit: BoxFit.cover,
+        );
+    } else
+      return SizedBox();
   }
 
   void _showImageDialog(BuildContext context, Store store) {

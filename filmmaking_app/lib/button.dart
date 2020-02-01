@@ -3,6 +3,7 @@ import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'store.dart';
+import 'classes.dart';
 
 class LikeButton extends StatefulWidget {
   final String enabledIcon;
