@@ -12,3 +12,7 @@ $colors: (
 @function color($name) {
     @return map-get($map: $colors, $key: $name);
 }
+
+* {
+    box-sizing: border-box;
+}

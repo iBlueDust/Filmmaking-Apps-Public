@@ -33,7 +33,7 @@ export default Vue.extend({
 </script>
 
 <style scoped lang='scss'>
-@import "../master.scss";
+@import "@/master.scss";
 
 .panel /deep/ .panel-item {
   text-align: center;

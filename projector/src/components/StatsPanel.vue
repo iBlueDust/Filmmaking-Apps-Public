@@ -30,7 +30,7 @@ export default Vue.extend({
 </script>
 
 <style scoped lang='scss'>
-@import "../master.scss";
+@import "@/master.scss";
 
 .container {
   background: url("../assets/drawable/bumpy_circle.svg");
