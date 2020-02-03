@@ -1,0 +1,14 @@
+$colors: (
+    primary: #191919,
+    primary-dark: #090909,
+    card: rgba(66, 66, 66, 0.788),
+    // c7d0d8be
+    dislike: #090909,
+    text-title: black,
+    text-primary: white,
+    text-dislike: white
+);
+
+@function color($name) {
+    @return map-get($map: $colors, $key: $name);
+}

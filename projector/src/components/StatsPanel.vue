@@ -29,7 +29,9 @@ export default Vue.extend({
 });
 </script>
 
-<style scoped>
+<style scoped lang='scss'>
+@import "../master.scss";
+
 .container {
   background: url("../assets/drawable/bumpy_circle.svg");
   background-position-x: 101%;
@@ -53,8 +55,8 @@ h1 > img {
 }
 
 h1.dislike {
-  background: black;
-  color: white;
+  background: color(dislike);
+  color: color(text-dislike);
   text-align: right;
   position: absolute;
   border-top-left-radius: 64px;

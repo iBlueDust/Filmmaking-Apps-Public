@@ -1,7 +1,7 @@
 <template>
   <div id="app" class="panel-container horizontal">
     <div class="stack-container panel panel-container vertical">
-      <img :src="image" class="img stack" />
+      <img :src="image" class="main-img stack" />
       <h1 class="panel name">{{ name }}</h1>
       <article class="panel biography">
         <p>{{ biography }}</p>
@@ -39,7 +39,7 @@ export default Vue.extend({
 });
 </script>
 
-<style>
+<style lang='scss'>
 @import "./assets/fonts/fonts.css";
 
 html,
@@ -60,7 +60,9 @@ h5 {
 }
 </style>
 
-<style scope>
+<style lang='scss' scoped>
+@import 'master.scss';
+
 #app {
   height: 100%;
   font-family: "Open Sans", Helvetica, Arial, sans-serif;
@@ -71,28 +73,26 @@ h5 {
 
 .panel-container {
   display: grid;
-}
 
-.panel-container.horizontal {
-  grid-template-columns: 1fr 400px;
-  grid-template-rows: auto;
-}
-
-.panel-container.vertical {
-  grid-template-columns: auto;
-  grid-template-rows: auto auto;
-  align-content: space-between;
+  &.horizontal {
+    grid-template-columns: 1fr 400px;
+    grid-template-rows: auto;
+  }
+  &.vertical {
+    grid-template-columns: auto;
+    grid-template-rows: auto auto;
+    align-content: space-between;
+  }
 }
 
 .stack-container {
   position: relative;
+  .stack {
+    position: absolute;
+  }
 }
 
-.stack-container > .stack {
-  position: absolute;
-}
-
-.img {
+.main-img {
   width: 100%;
   height: 100%;
   object-fit: cover;
@@ -102,13 +102,15 @@ h5 {
 .name {
   margin: 32px;
   font-size: 5rem;
+  color: color(text-title);
 }
 
 article.biography {
   margin: 32px auto;
   padding: 8px 16px;
   font-size: 12px;
-  background: #c7d0d8be;
+  background: color(card);
+  color: color(text-primary);
   text-align: center;
   max-width: 40vw;
 }
@@ -118,5 +120,8 @@ main.panel {
   display: grid;
   grid-template-rows: 1fr auto;
   flex-direction: column;
+
+  background: color(primary);
+  color: color(text-primary);
 }
 </style>
