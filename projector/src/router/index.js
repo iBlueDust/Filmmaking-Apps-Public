@@ -10,12 +10,19 @@ const routes = [{
         component: Home
     },
     {
+        path: '/boot/:id',
+        name: 'boot',
+        props: route => ({ id: route.params.id }),
+        component: () =>
+            import ('@/views/Boot.vue'),
+    },
+    {
         path: '/profile/:id',
         name: 'profile',
-        props: (route) => ({ id: route.params.id }),
+        props: (route) => ({ id: route.params.id, }),
         component: () =>
             import ('@/views/Profile.vue')
-    }
+    },
 ]
 
 export default new VueRouter({

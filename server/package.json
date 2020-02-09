@@ -1,23 +1,28 @@
 {
-  "name": "server",
-  "version": "1.0.0",
-  "description": "The server that operates to connect the controller to the projectors as props for the final filmmaking project as per the script",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "keywords": [
-    "server",
-    "projector",
-    "controller",
-    "film",
-    "filmmaking",
-    "props"
-  ],
-  "author": "Peter R. Raozen",
-  "license": "MIT",
-  "dependencies": {
-    "cors": "^2.8.5",
-    "express": "^4.17.1"
-  }
+    "name": "server",
+    "version": "1.0.0",
+    "description": "The server that operates to connect the controller to the projectors as props for the final filmmaking project as per the script",
+    "main": "index.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "serve": "nodemon"
+    },
+    "keywords": [
+        "server",
+        "projector",
+        "controller",
+        "film",
+        "filmmaking",
+        "props"
+    ],
+    "author": "Peter R. Raozen",
+    "license": "MIT",
+    "dependencies": {
+        "cors": "^2.8.5",
+        "express": "^4.17.1",
+        "socket.io": "^2.3.0"
+    },
+    "devDependencies": {
+        "nodemon": "^2.0.2"
+    }
 }

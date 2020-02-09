@@ -1,8 +1,6 @@
 <template>
   <div id="app">
-    <div v-if="loading" class="loader">
-      <bounce-loader :loading="true"></bounce-loader>Loading...
-    </div>
+    <loader v-if="loading" />
     <div v-else class="panel-container horizontal">
       <div class="stack-container panel panel-container vertical">
         <img :src="image" class="main-img stack" />
@@ -21,26 +19,24 @@
 
 <script lang='ts'>
 import Vue from "vue";
-import { db } from "@/main";
 
-import BounceLoader from "vue-spinner/src/BounceLoader";
-
-import ChargesPanel from "@/components/ChargesPanel.vue";
-import StatsPanel from "@/components/StatsPanel.vue";
+import ChargesPanel from "@/components/ChargesPanel";
+import StatsPanel from "@/components/StatsPanel";
+import Loader from "@/components/Loader";
 
 export default Vue.extend({
   name: "Profile",
   components: {
     "charges-panel": ChargesPanel,
     "stats-panel": StatsPanel,
-    "bounce-loader": BounceLoader
+    loader: Loader
   },
   props: {
     id: String
   },
   data: () => ({
     loading: true,
-    name: db,
+    name: "",
     biography:
       "Id aliquip ut eiusmod do sit. Consequat dolor velit non pariatur consectetur et. Ut pariatur cupidatat dolor qui est nulla velit labore elit. Sunt non laboris consectetur qui amet magna laboris. Cupidatat eiusmod aliqua tempor pariatur occaecat excepteur nulla culpa dolor. Et deserunt sunt sit ex sunt aliqua commodo aute esse laboris aute. Mollit aute culpa reprehenderit cupidatat.",
     charges: ["Fraud", "Theft", "Murder", "Assault", "Manslaughter"]
@@ -83,16 +79,6 @@ h5 {
   overflow: hidden;
   height: 100%;
   background: color(primary);
-
-  & > .loader {
-    height: 100%;
-    display: grid;
-    grid-auto-flow: column;
-    align-items: center;
-    justify-content: center;
-    gap: 32px;
-    color: color(text-primary);
-  }
 }
 
 .panel-container {

@@ -1,0 +1,424 @@
+~~200
+Siggeur and Brothers Inc.
+Internal Firmware NT v125.554.10001
+RYTEK U4J12 CORE BIOS version 54A1SD
+Little Man Configuration  Enabled
+Live Diagnostics          Disabled
+Intermittent Analytics    Disabled
+~~2000
+
+CPU: MOS Technology 6502 RISC-V @ 10.00GHz
+MEM: 2x 4GiB CROSSHAIR GDDR-7 7777MHz
+GPU: MOS Intergrated(R) Swift Graphics (22 Compute Units) @ 800MHz
+~~500
+Initializing Firewire Controllers .. DONE
+~~400
+Initializing USB Controllers .. DONE
+~~1000
+
+Searching for BOOT volumes...
+~~250
+Booting from SeaDoor(R) Cambria(TM) 3GB 5400RPM HDD
+~~500
+
+D:\Apps\Filmmaking Apps\projector\src\views\Home.vue
+  28:8  error  'Vue' is defined but never used  no-unused-vars
+
+~~100
+✖ 1 problem (1 error, 0 warnings)
+
+
+~~50
+ @ ./src/router/index.js 4:0-37 9:13-17
+ @ ./src/main.js
+ @ multi (webpack)-dev-server/client?http://192.168.0.15:8080/sockjs-node (webpack)/hot/dev-server.js ./src/main.js
+
+
+~~50
+ WAIT  Compiling...                                                                                                    18:50:16
+~~1000
+98% after emitting CopyPlugin
+
+ ERROR  Failed to compile with 1 errors                                                                                18:50:21
+ error  in ./src/views/Home.vue
+
+Module Error (from ./node_modules/eslint-loader/index.js):
+~~10
+
+D:\Apps\Filmmaking Apps\projector\src\views\Home.vue
+  28:8  error  'Vue' is defined but never used  no-unused-vars
+~~10
+
+✖ 1 problem (1 error, 0 warnings)
+ WARNING  Compiled with 1 warnings                                                                                     19:38:23
+ warning  in ./src/views/Profile.vue?vue&type=script&lang=ts&
+~~50
+
+"export 'db' was not found in '@/main'
+ ERROR  Failed to compile with 1 errors                                                                                20:56:15
+ error  in ./src/views/Home.vue?vue&type=script&lang=js&
+~~50
+
+Syntax Error: SyntaxError: D:\Apps\Filmmaking Apps\projector\src\views\Home.vue: Unexpected token, expected "," (61:2)
+
+  59 |          }
+  60 |  }
+> 61 |   created() {
+     |   ^
+  62 |     this.socket = Io(serverLocation, {
+  63 |       upgrade: false,
+ ERROR  Failed to compile with 1 errors                                                                                21:00:25
+ error  in ./src/views/Home.vue?vue&type=script&lang=js&
+~~25
+
+Syntax Error: SyntaxError: D:\Apps\Filmmaking Apps\projector\src\views\Home.vue: Unexpected token, expected "," (61:2)
+
+  59 |          }
+  60 |  }
+> 61 |   created() {
+     |   ^
+  62 |     this.socket = Io(serverLocation, {
+  63 |       upgrade: false,
+ ERROR  Failed to compile with 1 errors                                                                                21:01:10
+ error  in ./src/views/Home.vue
+~~20
+
+Module Error (from ./node_modules/eslint-loader/index.js):
+
+~~200
+D:\Apps\Filmmaking Apps\projector\src\views\Home.vue
+  57:7   error  '$router' is not defined          no-undef
+  58:15  error  'isBootUpEnabled' is not defined  no-undef
+ ERROR  Failed to compile with 1 errors                                                                                21:01:29
+ error  in ./src/views/Home.vue
+
+Module Error (from ./node_modules/eslint-loader/index.js):
+~~500
+
+D:\Apps\Filmmaking Apps\projector\src\views\Home.vue
+ DONE  Compiled successfully in 1058ms                                                                                 21:42:48
+
+  App running at:
+  - Local:   http://localhost:8080/
+  - Network: http://192.168.0.15:8080/
+  
+  D:\Apps\Filmmaking Apps\projector\src\views\Home.vue
+  28:8  error  'Vue' is defined but never used  no-unused-vars
+
+~~100
+✖ 1 problem (1 error, 0 warnings)
+
+
+~~50
+ @ ./src/router/index.js 4:0-37 9:13-17
+ @ ./src/main.js
+ @ multi (webpack)-dev-server/client?http://192.168.0.15:8080/sockjs-node (webpack)/hot/dev-server.js ./src/main.js
+
+
+~~50
+ WAIT  Compiling...                                                                                                    18:50:16
+~~1000
+98% after emitting CopyPlugin
+
+ ERROR  Failed to compile with 1 errors                                                                                18:50:21
+ error  in ./src/views/Home.vue
+
+Module Error (from ./node_modules/eslint-loader/index.js):
+~~10
+
+D:\Apps\Filmmaking Apps\projector\src\views\Home.vue
+  28:8  error  'Vue' is defined but never used  no-unused-vars
+~~10
+
+✖ 1 problem (1 error, 0 warnings)
+ WARNING  Compiled with 1 warnings                                                                                     19:38:23
+ warning  in ./src/views/Profile.vue?vue&type=script&lang=ts&
+~~50
+
+"export 'db' was not found in '@/main'
+ ERROR  Failed to compile with 1 errors                                                                                20:56:15
+ error  in ./src/views/Home.vue?vue&type=script&lang=js&
+~~50
+
+Syntax Error: SyntaxError: D:\Apps\Filmmaking Apps\projector\src\views\Home.vue: Unexpected token, expected "," (61:2)
+
+  59 |          }
+  60 |  }
+> 61 |   created() {
+     |   ^
+  62 |     this.socket = Io(serverLocation, {
+  63 |       upgrade: false,
+ ERROR  Failed to compile with 1 errors                                                                                21:00:25
+ error  in ./src/views/Home.vue?vue&type=script&lang=js&
+~~25
+
+Syntax Error: SyntaxError: D:\Apps\Filmmaking Apps\projector\src\views\Home.vue: Unexpected token, expected "," (61:2)
+
+  59 |          }
+  60 |  }
+> 61 |   created() {
+     |   ^
+  62 |     this.socket = Io(serverLocation, {
+  63 |       upgrade: false,
+ ERROR  Failed to compile with 1 errors                                                                                21:01:10
+ error  in ./src/views/Home.vue
+~~20
+
+Module Error (from ./node_modules/eslint-loader/index.js):
+
+~~200
+D:\Apps\Filmmaking Apps\projector\src\views\Home.vue
+  57:7   error  '$router' is not defined          no-undef
+  58:15  error  'isBootUpEnabled' is not defined  no-undef
+ ERROR  Failed to compile with 1 errors                                                                                21:01:29
+ error  in ./src/views/Home.vue
+
+Module Error (from ./node_modules/eslint-loader/index.js):
+~~500
+
+D:\Apps\Filmmaking Apps\projector\src\views\Home.vue
+ DONE  Compiled successfully in 1058ms                                                                                 21:42:48
+
+  App running at:
+  - Local:   http://localhost:8080/
+  - Network: http://192.168.0.15:8080/
+
+  D:\Apps\Filmmaking Apps\projector\src\views\Home.vue
+  28:8  error  'Vue' is defined but never used  no-unused-vars
+
+~~100
+✖ 1 problem (1 error, 0 warnings)
+
+
+~~50
+ @ ./src/router/index.js 4:0-37 9:13-17
+ @ ./src/main.js
+ @ multi (webpack)-dev-server/client?http://192.168.0.15:8080/sockjs-node (webpack)/hot/dev-server.js ./src/main.js
+
+
+~~50
+ WAIT  Compiling...                                                                                                    18:50:16
+~~1000
+98% after emitting CopyPlugin
+
+ ERROR  Failed to compile with 1 errors                                                                                18:50:21
+ error  in ./src/views/Home.vue
+
+Module Error (from ./node_modules/eslint-loader/index.js):
+~~10
+
+D:\Apps\Filmmaking Apps\projector\src\views\Home.vue
+  28:8  error  'Vue' is defined but never used  no-unused-vars
+~~10
+
+✖ 1 problem (1 error, 0 warnings)
+ WARNING  Compiled with 1 warnings                                                                                     19:38:23
+ warning  in ./src/views/Profile.vue?vue&type=script&lang=ts&
+~~50
+
+"export 'db' was not found in '@/main'
+ ERROR  Failed to compile with 1 errors                                                                                20:56:15
+ error  in ./src/views/Home.vue?vue&type=script&lang=js&
+~~50
+
+Syntax Error: SyntaxError: D:\Apps\Filmmaking Apps\projector\src\views\Home.vue: Unexpected token, expected "," (61:2)
+
+  59 |          }
+  60 |  }
+> 61 |   created() {
+     |   ^
+  62 |     this.socket = Io(serverLocation, {
+  63 |       upgrade: false,
+ ERROR  Failed to compile with 1 errors                                                                                21:00:25
+ error  in ./src/views/Home.vue?vue&type=script&lang=js&
+~~25
+
+Syntax Error: SyntaxError: D:\Apps\Filmmaking Apps\projector\src\views\Home.vue: Unexpected token, expected "," (61:2)
+
+  59 |          }
+  60 |  }
+> 61 |   created() {
+     |   ^
+  62 |     this.socket = Io(serverLocation, {
+  63 |       upgrade: false,
+ ERROR  Failed to compile with 1 errors                                                                                21:01:10
+ error  in ./src/views/Home.vue
+~~20
+
+Module Error (from ./node_modules/eslint-loader/index.js):
+
+~~100
+D:\Apps\Filmmaking Apps\projector\src\views\Home.vue
+  57:7   error  '$router' is not defined          no-undef
+  58:15  error  'isBootUpEnabled' is not defined  no-undef
+ ERROR  Failed to compile with 1 errors                                                                                21:01:29
+ error  in ./src/views/Home.vue
+
+Module Error (from ./node_modules/eslint-loader/index.js):
+~~200
+
+D:\Apps\Filmmaking Apps\projector\src\views\Home.vue
+ DONE  Compiled successfully in 1058ms                                                                                 21:42:48
+
+  App running at:
+  - Local:   http://localhost:8080/
+  - Network: http://192.168.0.15:8080/
+
+~~750
+!!2
+| | | `-- vary@1.1.2
+| | +-- filesize@3.6.1
+| | +-- gzip-size@5.1.1
+| | | +-- duplexer@0.1.1
+| | | `-- pify@4.0.1 deduped
+| | +-- lodash@4.17.15 deduped
+| | +-- mkdirp@0.5.1 deduped
+| | +-- opener@1.5.1
+| | `-- ws@6.2.1
+| |   `-- async-limiter@1.0.1
+| +-- webpack-chain@6.3.0
+| | +-- deepmerge@1.5.2
+| | `-- javascript-stringify@2.0.1
+| +-- webpack-dev-server@3.10.1
+| | +-- ansi-html@0.0.7
+| | +-- bonjour@3.5.0
+| | | +-- array-flatten@2.1.2
+| | | +-- deep-equal@1.1.1
+| | | | +-- is-arguments@1.0.4
+| | | | +-- is-date-object@1.0.2
+| | | | +-- is-regex@1.0.5
+| | | | | `-- has@1.0.3 deduped
+| | | | +-- object-is@1.0.2
+| | | | +-- object-keys@1.1.1 deduped
+| | | | `-- regexp.prototype.flags@1.3.0
+| | | |   +-- define-properties@1.1.3 deduped
+| | | |   `-- es-abstract@1.17.2 deduped
+| | | +-- dns-equal@1.0.0
+| | | +-- dns-txt@2.0.2
+| | | | `-- buffer-indexof@1.1.1
+| | | +-- multicast-dns@6.2.3
+| | | | +-- dns-packet@1.3.1
+| | | | | +-- ip@1.1.5 deduped
+| | | | | `-- safe-buffer@5.1.2 deduped
+| | | | `-- thunky@1.1.0
+| | | `-- multicast-dns-service-types@1.1.0
+| | +-- chokidar@2.1.8
+| | | +-- anymatch@2.0.0
+| | | | +-- micromatch@3.1.10 deduped
+| | | | `-- normalize-path@2.1.1
+| | | |   `-- remove-trailing-separator@1.1.0
+| | | +-- async-each@1.0.3
+| | | +-- braces@2.3.2 deduped
+| | | +-- fsevents@1.2.11
+| | | | +-- bindings@1.5.0
+| | | | | `-- file-uri-to-path@1.0.0
+| | | | +-- nan@2.14.0 deduped
+!!5
+| | | | `-- node-pre-gyp@0.14.0
+| | | |   +-- detect-libc@1.0.3
+| | | |   +-- mkdirp@0.5.1
+| | | |   | `-- minimist@0.0.8
+| | | |   +-- needle@2.4.0
+| | | |   | +-- debug@3.2.6
+| | | |   | | `-- ms@2.1.2
+| | | |   | +-- iconv-lite@0.4.24
+| | | |   | | `-- safer-buffer@2.1.2
+| | | |   | `-- sax@1.2.4
+| | | |   +-- nopt@4.0.1
+| | | |   | +-- abbrev@1.1.1
+| | | |   | `-- osenv@0.1.5
+| | | |   |   +-- os-homedir@1.0.2
+!!1
+| | | |   |   `-- os-tmpdir@1.0.2
+| | | |   +-- npm-packlist@1.4.7
+| | | |   | +-- ignore-walk@3.0.3
+| | | |   | | `-- minimatch@3.0.4
+| | | |   | |   `-- brace-expansion@1.1.11
+| | | |   | |     +-- balanced-match@1.0.0
+| | | |   | |     `-- concat-map@0.0.1
+| | | |   | `-- npm-bundled@1.1.1
+| | | |   |   `-- npm-normalize-package-bin@1.0.1
+| | | |   +-- npmlog@4.1.2
+| | | |   | +-- are-we-there-yet@1.1.5
+| | | |   | | +-- delegates@1.0.0
+| | | |   | | `-- readable-stream@2.3.6
+| | | |   | |   +-- core-util-is@1.0.2
+| | | |   | |   +-- inherits@2.0.4 deduped
+| | | |   | |   +-- isarray@1.0.0
+!!2
+| | | |   | |   +-- process-nextick-args@2.0.1
+| | | |   | |   +-- safe-buffer@5.1.2 deduped
+| | | |   | |   +-- string_decoder@1.1.1
+| | | |   | |   | `-- safe-buffer@5.1.2 deduped
+| | | |   | |   `-- util-deprecate@1.0.2
+| | | |   | +-- console-control-strings@1.1.0
+| | | |   | +-- gauge@2.7.4
+| | | |   | | +-- aproba@1.2.0
+| | | |   | | +-- console-control-strings@1.1.0 deduped
+| | | |   | | +-- has-unicode@2.0.1
+| | | |   | | +-- object-assign@4.1.1
+| | | |   | | +-- signal-exit@3.0.2
+| | | |   | | +-- string-width@1.0.2
+| | | |   | | | +-- code-point-at@1.1.0
+| | | |   | | | +-- is-fullwidth-code-point@1.0.0
+| | | |   | | | | `-- number-is-nan@1.0.1
+| | | |   | | | `-- strip-ansi@3.0.1 deduped
+| | | |   | | +-- strip-ansi@3.0.1
+| | | |   | | | `-- ansi-regex@2.1.1
+| | | |   | | `-- wide-align@1.1.3
+| | | |   | |   `-- string-width@1.0.2 deduped
+| | | |   | `-- set-blocking@2.0.0
+| | | |   +-- rc@1.2.8
+| | | |   | +-- deep-extend@0.6.0
+| | | |   | +-- ini@1.3.5
+| | | |   | +-- minimist@1.2.0
+| | | |   | `-- strip-json-comments@2.0.1
+| | | |   +-- rimraf@2.7.1
+| | | |   | `-- glob@7.1.6
+| | | |   |   +-- fs.realpath@1.0.0
+| | | |   |   +-- inflight@1.0.6
+| | | |   |   | +-- once@1.4.0 deduped
+| | | |   |   | `-- wrappy@1.0.2
+| | | |   |   +-- inherits@2.0.4
+| | | |   |   +-- minimatch@3.0.4 deduped
+| | | |   |   +-- once@1.4.0
+| | | |   |   | `-- wrappy@1.0.2 deduped
+| | | |   |   `-- path-is-absolute@1.0.1
+| | | |   +-- semver@5.7.1
+| | | |   `-- tar@4.4.13
+| | | |     +-- chownr@1.1.3
+| | | |     +-- fs-minipass@1.2.7
+| | | |     | `-- minipass@2.9.0 deduped
+| | | |     +-- minipass@2.9.0
+| | | |     | +-- safe-buffer@5.1.2 deduped
+| | | |     | `-- yallist@3.1.1 deduped
+| | | |     +-- minizlib@1.3.3
+| | | |     | `-- minipass@2.9.0 deduped
+| | | |     +-- mkdirp@0.5.1 deduped
+| | | |     +-- safe-buffer@5.1.2
+| | | |     `-- yallist@3.1.1
+| | | +-- glob-parent@3.1.0 deduped
+| | | +-- inherits@2.0.4 deduped
+| | | +-- is-binary-path@1.0.1
+| | | | `-- binary-extensions@1.13.1
+| | | +-- is-glob@4.0.1 deduped
+| | | +-- normalize-path@3.0.0 deduped
+| | | +-- path-is-absolute@1.0.1 deduped
+| | | +-- readdirp@2.2.1
+| | | | +-- graceful-fs@4.2.3 deduped
+| | | | +-- micromatch@3.1.10 deduped
+| | | | `-- readable-stream@2.3.7 deduped
+| | | `-- upath@1.2.0
+| | +-- compression@1.7.4
+| | | +-- accepts@1.3.7 deduped
+| | | +-- bytes@3.0.0
+| | | +-- compressible@2.0.18
+| | | | `-- mime-db@1.43.0 deduped
+| | | +-- debug@2.6.9
+| | | | `-- ms@2.0.0
+| | | +-- on-headers@1.0.2
+| | | +-- safe-buffer@5.1.2 deduped
+| | | `-- vary@1.1.2 deduped
+| | +-- connect-history-api-fallback@1.6.0
+| `---- debug@4.1.1 deduped
+`------ del@4.1.1

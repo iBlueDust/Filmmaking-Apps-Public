@@ -1,47 +1,46 @@
-const express = require('express');
-const cors = require('cors');
-const app = express();
-const PORT = 3000; // This is an ABSOLUTE GIVEN
+const Express = require('express')
+const app = Express()
 
-const SUCCESS = 'success';
-const FAILED = 'failed';
+const http = require('http').Server(app)
+const Io = require('socket.io')(http)
+    // const Cors = require('cors')
 
-app.listen(PORT, () => console.log(`Listening at ${PORT}`));
-app.use(express.static('../controller'));
-app.use(cors());
-app.use(express.json({ limit: '1mb' }));
+const FS = require('fs');
 
-const projectors = {};
+//// CONSTANTS
+const PORT = 3000 // This is an ABSOLUTE GIVEN
 
-// For the controller to change server-stored states
-app.post('/projector', (request, response) => {
-    // Just console.log and respond
-    console.log(request.body);
-    response.json({
-        status: SUCCESS,
-        data: request.body
-    });
-});
+const SUCCESS = 'success'
+const FAILED = 'failed'
 
-// For all projectors to get an id
-app.post('/queue', (_, response) => {
+//// STATE
+let profiles = [];
 
-    let index = -1;
-    do {
-        index++;
-    } while (projectors[index] != null)
 
-    projectors[index] = {
-        id: index,
-        lastRequest: Date.now(),
-        name: null,
-        likes: 0,
-        image: null
-    };
-    console.log(`A Projector was given slot ${index}`);
+//// INT MAIN
 
-    response.json({
-        status: SUCCESS,
-        id: index
-    });
-});
+// Read Json
+FS.readFile('profiles-list.json', (err, data) => {
+    profiles = JSON.parse(data)
+    console.log("Loaded profiles")
+})
+
+// Socket
+Io.on('connection', socket => {
+    console.log(`Client connected    (id: ${socket.id})`)
+
+    socket.emit('profile list', profiles)
+    socket.on('disconnect', () => console.log(`Client disconnected (id: ${socket.id})`))
+})
+
+// Start server
+http.listen(PORT, () => {
+    console.log(`Listening at ${PORT}`)
+})
+
+// Serve a public directory
+// 
+// app.listen(PORT, () => console.log(`Listening at ${PORT}`))
+// app.use(express.static('../controller'))
+// app.use(cors())
+// app.use(express.json({ limit: '1mb' }))
