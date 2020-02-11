@@ -10,7 +10,6 @@ Vue.config.productionTip = false;
 
 export const Socket = Io(serverLocation, {
     upgrade: false,
-    transports: ["websocket"],
     reconnection: true,
     forceNew: false
 });

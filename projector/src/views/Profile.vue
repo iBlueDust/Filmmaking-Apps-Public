@@ -1,19 +1,31 @@
 <template>
-  <div id="app">
+  <div class="main-container">
     <loader v-if="loading" />
-    <div v-else class="panel-container horizontal">
-      <div class="stack-container panel panel-container vertical">
-        <img :src="image" class="main-img stack" />
+
+    <!-- Show error message if failed to start profile stream -->
+    <p v-else-if="error != null" class="stack error panel">
+      An error occured
+      <br />
+      {{error.message}}
+    </p>
+
+    <!-- Show the main stuff -->
+    <!-- FIXME: Background's backup color (i.e. white is not linked to master.scss) -->
+    <main v-else class="panel stack panel-container horizontal">
+      <div
+        class="image-panel panel panel-container vertical"
+        :style="{ backgroundImage: `url(${image})` }"
+      >
         <h1 class="panel name">{{ name }}</h1>
-        <article class="panel biography">
+        <article class="panel biography" v-if="biography != null && biography !== ''">
           <p>{{ biography }}</p>
         </article>
       </div>
-      <main class="panel">
+      <aside class="panel">
         <charges-panel class="charges" :charges="charges" />
-        <stats-panel class="stats" :likes="88" :dislikes="88" />
-      </main>
-    </div>
+        <stats-panel class="stats" :likes="likes" :dislikes="dislikes" />
+      </aside>
+    </main>
   </div>
 </template>
 
@@ -36,49 +48,65 @@ export default Vue.extend({
   },
   data: () => ({
     loading: true,
+    error: null,
     name: "",
-    biography:
-      "Id aliquip ut eiusmod do sit. Consequat dolor velit non pariatur consectetur et. Ut pariatur cupidatat dolor qui est nulla velit labore elit. Sunt non laboris consectetur qui amet magna laboris. Cupidatat eiusmod aliqua tempor pariatur occaecat excepteur nulla culpa dolor. Et deserunt sunt sit ex sunt aliqua commodo aute esse laboris aute. Mollit aute culpa reprehenderit cupidatat.",
-    charges: ["Fraud", "Theft", "Murder", "Assault", "Manslaughter"]
+    biography: "",
+    charges: [],
+    likes: 0,
+    dislikes: 0,
+    image: null, // Current image being displayed
+
+    lastTimestamp: Number.MIN_VALUE
   }),
-  computed: {
-    image() {
-      return "https://images.pexels.com/photos/3380967/pexels-photo-3380967.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940";
+  created() {
+    if (this.id == null) {
+      this.error = { msg: "No id was specified" };
+      return;
     }
+
+    // Request for a profile stream
+    this.sockets.subscribe("profile stream", response => {
+      this.loading = false;
+
+      if (response.error) {
+        // Handle the error
+        this.error = response.error;
+        console.error(response.error);
+
+        // Check if the timestamp is newer than last update
+        // (Default to last value for state)
+      } else if (this.lastTimestamp < response.timestamp) {
+        this.name = response.name || this.name;
+        this.biography = response.biography || this.biography;
+        this.charges = response.charges || this.charges;
+
+        this.likes = response.likes || this.likes;
+        this.dislikes = response.dislikes || this.dislikes;
+        this.image = response.image || this.image;
+      }
+    });
+    this.$socket.emit("profile stream start", { profileId: this.id });
+
+    setTimeout(() => {
+      this.loading = false;
+      this.error = { message: "Timed out connecting to the server" };
+    }, 15000);
   },
-  mounted() {}
+  destroyed() {
+    this.sockets.unsubscribe("profile stream");
+  }
 });
 </script>
 
-<style lang='scss'>
-html,
-body {
-  height: 100%;
-  overflow: none;
-  margin: 0;
-}
-
-h1,
-h2,
-h3,
-h4,
-h5 {
-  font-family: "Bebas Neue", Helvetica, Arial, sans-serif;
-  font-weight: 200;
-  text-transform: uppercase;
-}
-</style>
-
-<style lang='scss' scoped>
+<style scoped lang='scss'>
 @import "@/master.scss";
 
-#app {
-  font-family: "Open Sans", Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  overflow: hidden;
+.main-container {
+  width: 100%;
   height: 100%;
-  background: color(primary);
+  display: grid;
+  justify-items: center;
+  align-items: center;
 }
 
 .panel-container {
@@ -96,42 +124,55 @@ h5 {
 }
 
 .stack-container {
-  position: relative;
+  position: absolute;
   .stack {
-    position: absolute;
+    position: relative;
   }
 }
 
-.main-img {
+p.error {
   width: 100%;
   height: 100%;
-  object-fit: cover;
-  z-index: -10;
-}
-
-.name {
-  margin: 32px;
-  font-size: 5rem;
-  color: color(text-title);
-}
-
-article.biography {
-  margin: 32px auto;
-  padding: 8px 16px;
-  font-size: 12px;
-  background: color(card);
-  color: color(text-primary);
+  padding: 5em;
+  color: color(error);
   text-align: center;
-  max-width: 40vw;
+  vertical-align: middle;
 }
 
 main.panel {
+  width: 100%;
   height: 100%;
-  display: grid;
-  grid-template-rows: 1fr auto;
-  flex-direction: column;
 
-  background: color(primary);
-  color: color(text-primary);
+  div.image-panel {
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+  }
+
+  .name {
+    margin: 32px;
+    font-size: 5rem;
+    color: color(text-title);
+  }
+
+  article.biography {
+    margin: 32px auto;
+    padding: 8px 16px;
+    font-size: 12px;
+    background: color(card);
+    color: color(text-primary);
+    text-align: center;
+    max-width: 40vw;
+  }
+
+  aside.panel {
+    height: 100%;
+    display: grid;
+    grid-template-rows: 1fr auto;
+    flex-direction: column;
+
+    background: color(primary);
+    color: color(text-primary);
+  }
 }
 </style>

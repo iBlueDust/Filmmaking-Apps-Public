@@ -2,11 +2,14 @@ $colors: (
     primary: #191919,
     primary-dark: #090909,
     card: rgba(66, 66, 66, 0.788),
+    secondary: white,
     // c7d0d8be
     dislike: #090909,
     text-title: black,
     text-primary: white,
-    text-dislike: white
+    text-dislike: white,
+
+    error: #df3030
 );
 
 @function color($name) {

@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div class="main-container">
     <loader v-if="isLoading" />
     <div v-else-if="profiles.length <= 0" class="empty">
       <h1>Uh oh!</h1>
@@ -27,7 +27,7 @@
         >
           <h2>{{ profile.name }}</h2>
           <p>{{ profile.id }}</p>
-          <img v-if="profile.image != null" :src="profile.image" />
+          <img v-if="profile.thumbnail != null" :src="profile.thumbnail" />
         </a>
       </section>
     </main>
@@ -57,14 +57,19 @@ export default {
     }
   },
   mounted() {
-    this.sockets.subscribe("profile list", data => {
+    this.sockets.subscribe("response profile list", data => {
       this.isLoading = false;
       this.profiles = data;
+
+      this.sockets.unsubscribe("profile list");
     });
+    this.$socket.emit("profile list");
 
     // Set a timeout for profile listing
     setTimeout(() => {
       this.isLoading = false;
+
+      this.sockets.unsubscribe("profile list");
     }, 15000);
   },
   destroyed() {
@@ -79,7 +84,7 @@ export default {
 
 $card-width: 400px;
 
-.container {
+.main-container {
   height: 100%;
   display: grid;
   align-items: center;

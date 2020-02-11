@@ -35,6 +35,12 @@ export default Vue.extend({
 <style scoped lang='scss'>
 @import "@/master.scss";
 
+.container {
+  display: flex;
+  flex-direction: column;
+  margin: 32px;
+}
+
 .panel /deep/ .panel-item {
   text-align: center;
   font-size: 1.75rem;
@@ -42,12 +48,6 @@ export default Vue.extend({
   display: flex;
   justify-content: center;
   align-items: center;
-}
-
-.container {
-  display: flex;
-  flex-direction: column;
-  margin: 32px;
 }
 
 h3 {

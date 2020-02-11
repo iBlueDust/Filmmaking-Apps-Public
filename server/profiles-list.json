@@ -1,9 +1,17 @@
 [{
         "name": "Bill Walters",
-        "id": "pzT4vJyEyEH5vvfh"
+        "id": "pzT4vJyEyEH5vvfh",
+        "biography": "Non in voluptate elit exercitation mollit proident sint sint ad eiusmod occaecat non. Dolor voluptate sunt veniam excepteur deserunt enim nulla incididunt ad voluptate sint nostrud cillum consequat. Ea ipsum id reprehenderit elit occaecat anim proident voluptate dolor consequat. Ullamco qui in commodo in magna id. Aute sint velit commodo proident dolor deserunt voluptate cupidatat veniam occaecat adipisicing voluptate laboris. Aliquip sint nulla minim et. Pariatur deserunt consectetur ad est Lorem pariatur incididunt irure ex.",
+        "charges": ["Manslaughter", "Theft", "Assault", "Petty theft", "Burglary", "Trespassing"],
+        "image": "https://images.pexels.com/photos/3577391/pexels-photo-3577391.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500",
+        "likes": 20
     },
     {
         "name": "Sawyer McCann",
-        "id": "X08P8eT0Vn02tiq4"
+        "id": "X08P8eT0Vn02tiq4",
+        "biography": "Bill's gay",
+        "charges": ["Manslaughter", "Theft", "Assault", "Petty theft", "Burglary", "Trespassing"],
+        "image": "https://images.pexels.com/photos/2724373/pexels-photo-2724373.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500",
+        "likes": 20
     }
 ]

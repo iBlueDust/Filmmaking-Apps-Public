@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Projector Controller</title>
+    <script src="vue.min.js"></script>
+    <script src="../socket.io/socket.io.js"></script>
+</head>
+
+<body>
+    <h1>Projector Controller v0.1</h1>
+    <div id="app">
+        <panel v-for="panel in panels" v-bind:panel="panel" v-bind:key="panel.id"></panel>
+        <!-- <div class="panel">
+        <h2>Projector 1</h2>
+        <h3 class="status-display">Status: <span class="status-span">{{ status1 }}</span></h3>
+        <h3 class="likes-display">Likes: <span class="likes-span">00</span></h3>
+        <span class="label">Name: </span>
+        <input type="text" title="Set name for Projector 1" class="name" />
+        <button class="name-btn set">Set</button>
+        <button class="name-btn animate">Animate</button>
+        <br />
+        <span class="label">Likes: </span>
+        <input type="number" title="Set likes for Projector 1" class="likes" placeholder="Likes" />
+        <button class="number-btn set">Set</button>
+        <button class="number-btn animate">Animate</button>
+        <br/>
+        <button class="likes-add-1">+1</button>
+        <button class="likes-subtract-1">-1</button>
+    </div> -->
+    </div>
+    <script src="index.js"></script>
+
+</body>
+
+</html>

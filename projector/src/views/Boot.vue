@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div class="main-container">
     <p v-html="content" class="console"></p>
     <p v-html="progress" class="progress"></p>
   </div>
@@ -125,8 +125,8 @@ export default {
 };
 </script>
 
-<style lang='scss'>
-.container > * {
+<style lang='scss' scoped>
+.main-container > * {
   position: absolute;
 }
 
