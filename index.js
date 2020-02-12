@@ -22,7 +22,7 @@ const PanelComponent = Vue.component('panel', {
         async SetLikes() {
             console.log(`Setting ${this.targetLikes} likes`);
 
-            // socket.emit('profile update', { profileId: this.id, data = })
+            socket.emit('profile update', { profileId: this.id, data: })
         },
         async SetName() {
             console.log(`Setting ${this.targetName} as name`);
@@ -82,32 +82,18 @@ const PanelComponent = Vue.component('panel', {
 
 
 (async function() {
-    let ip = '';
-    try {
-        ip = await (await fetch('../server-ip.txt')).text();
-    } catch {
-        alert('Could not get server ip');
-    }
+    let ip = 'http://localhost:5000/';
 
     const app = new Vue({
         el: '#app',
         data: {
-            panels: [{
-                    id: 0,
-                    apipath: ip + ':3000/projector',
-                    title: 'Projector 1',
-                    name: null
-                },
-                {
-                    id: 1,
-                    apipath: ip + ':3000/projector',
-                    title: 'Projector 2',
-                    name: 'Melinda'
-                }
-            ]
+            panels: [],
         },
         components: {
             panel: PanelComponent
-        }
+        },
+        created() {
+            socket.emit('profile list')
+        },
     });
 })();

@@ -1,123 +1,167 @@
-const Express = require('express')
-const app = Express()
+'use strict';
 
-const http = require('http').Server(app)
-const Io = require('socket.io')(http)
-const Cors = require('cors')
+const Express = require('express');
+const app = Express();
+
+const http = require('http').Server(app);
+const Io = require('socket.io')(http, { origins: '*:*' });
+const Cors = require('cors');
 
 const FS = require('fs');
 
 //// CONSTANTS
-const PORT = 3000 // This is an ABSOLUTE GIVEN
-
-const SUCCESS = 'success'
-const FAILED = 'failed'
+const PORT = process.env.PORT || 5000; // This is an ABSOLUTE GIVEN
 
 //// STATE
-let listProfiles = []; // Only for listing profiles
-let projectors = {}; // Map of <projector client ids, profile ids>
+const projectors = {}; // Map of <projector client ids, profile ids>
 
 let profiles = []; // Complete list with state
 
+let controllers = []; // Controllers with streams
 
 //// METHODS
 function SendProfile(socket, profileId) {
-    const profile = profiles.find(p => p.id === profileId)
+    const profile = profiles.find(p => p.id === profileId);
 
     // Send the data and register the projector
     if (profile) {
-        projectors[socket.id] = profile.id;
         socket.emit('profile stream', { timestamp: Date.now(), ...profile });
+        return true;
     }
-    // ...unless if the profile id is not recognized
-    else socket.emit('profile stream', { request: data, error: { message: 'The profile id is unrecognized' } })
+    // ...unless if the profile id is not recognized, return false
+    else {
+        socket.emit('profile stream', {
+            request: data,
+            error: { message: 'The profile id is unrecognized' },
+        });
+        return false;
+    }
 }
-
 
 //// INT MAIN
 
 // Read Json
 FS.readFile('profiles-list.json', (err, data) => {
-    listProfiles = JSON.parse(data)
-    profiles = JSON.parse(data)
-    console.log("Loaded profiles")
-})
+    if (err) {
+        console.error(err);
+        return;
+    }
 
-// Socket
-Io.on('connection', socket => {
-    console.log(`Client connected    (id: ${socket.id})`)
+    profiles = JSON.parse(data);
+    console.log('Loaded profiles');
+});
 
-    //// LIST
-    // Profile List
+//// PROJECTOR
+const Pio = Io; //.of('/projector');
+
+Pio.on('connection', socket => {
+    console.log(`Projector connected     (id: ${socket.id})`);
+
+    // Send updates to all controllers
+    Cio.emit('stream', { data: profiles, projectors });
+
+    // List
     socket.on('profile list', () => {
-        socket.emit('response profile list', listProfiles)
-    })
+        console.log(`Requested profile list  (id: ${socket.id})`);
+        socket.emit('response profile list', profiles);
+    });
 
-    //// PROJECTOR
     // Request to start a profile stream
     socket.on('profile stream start', data => {
         // Validate request
         if (data.profileId == null) {
-            socket.emit('profile stream', { request: data, error: { message: 'No profile id was sent' } })
+            socket.emit('profile stream', {
+                request: data,
+                error: { message: 'No profile id was sent' },
+            });
 
             // Check the profiles list
         } else {
-            SendProfile(socket, data.profileId)
+            socket.join(data.profileId);
+            if (SendProfile(socket, data.profileId))
+                projectors[socket.id] = data.profileId;
         }
-    })
+    });
 
     // Request to refresh a profile stream
     socket.on('profile stream ping', () => {
-        const profileId = projectors[socket.id]
+        const profileId = projectors[socket.id];
 
         // If projector is registered, send the profile, else send an error
         if (profileId) {
-            SendProfile(socket, profileId)
+            SendProfile(socket, profileId);
         } else {
-            socket.emit('profile stream', { error: { message: "The client is not registered as a projector" } })
+            socket.emit('profile stream', {
+                error: {
+                    message: 'The client is not registered as a projector',
+                },
+            });
         }
-    })
+    });
 
     socket.on('disconnect', () => {
-        console.log(`Client disconnected (id: ${socket.id})`)
+        console.log(`Projector disconnected  (id: ${socket.id})`);
 
-        // Remove from projector list
-        delete projectors[socket.id]
-    })
+        // Remove from lists
+        if (socket.id && projectors[socket.id]) {
+            socket.leave(projectors[socket.id]);
+            delete projectors[socket.id];
 
-    //// CONTROLLER
-    // Update profile state
-    socket.on('profile update', data => {
-        // Request validation
-        if (!data.profileId)
-            socket.emit('response profile update', { request: data, error: { message: 'No profile id was sent' } })
-        else if (!data.data)
-            socket.emit('response profile update', { request: data, error: { message: 'No profile data was sent' } })
-
-        // Apply the update
-        else {
-            const profile = profiles.find(a => a.id === data.profileId);
-
-            // Update profile
-            if (profile) {
-                Object.assign(profile, data.data)
-
-                // Send an error if profile is not recognized
-            } else {
-                socket.emit('response profile update', { request: data, error: { message: 'The profile id is not recognized' } })
-            }
-            // Send an error if no profile id was specified
+            // Send updates to all controllers
+            Cio.emit('stream', { data: profiles, projectors });
         }
-    })
-})
+    });
+});
+
+//// CONTROLLER
+const Cio = Io.of('/controller');
+
+let lastTimestamp = Number.MIN_SAFE_INTEGER;
+
+Cio.on('connection', socket => {
+    console.log(`Controller connected    (id: ${socket.id})`);
+
+    // Register controller
+    controllers.push(socket.id);
+    socket.emit('stream', { data: profiles, projectors });
+
+    socket.on('update', data => {
+        const profile = profiles.find(a => a.id === data.profileId);
+
+        if (profile) {
+            // Update if the data is newer than last data
+            if (lastTimestamp < data.timestamp) {
+                // Make sure id is not set again
+                delete data.data.id;
+                Object.assign(profile, data.data);
+
+                // Update projectors
+                SendProfile(Io.to(profile.id), profile.id);
+
+                console.log(`Updated profile by ${socket.id}`);
+            }
+            socket.emit('response update', { request: data, error: null });
+        } else {
+            socket.emit('response update', {
+                request: data,
+                error: { message: 'Profile id is not recognized' },
+            });
+        }
+    });
+
+    // Unregister controller
+    socket.on('disconnect', () => {
+        console.log(`Controller disconnected (id: ${socket.id})`);
+        controllers = controllers.filter(a => a !== socket.id);
+    });
+});
 
 // Start server
 http.listen(PORT, () => {
-    console.log(`Listening at ${PORT}`)
-})
+    console.log(`Listening at ${PORT}`);
+});
 
 // Serve a public directory
-
-app.use(Express.static('./controller'))
-app.use(Cors())
-app.use(Express.json({ limit: '1mb' }))
+app.use(Express.static('../controller/dist'));
+app.use(Cors());
+app.use(Express.json({ limit: '1mb' }));

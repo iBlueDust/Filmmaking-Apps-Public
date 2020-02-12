@@ -1,12 +1,15 @@
 {
     "folders": [
-		{
-			"name": "server",
-			"path": "server"
-		},
-		{
-			"name": "projector",
-			"path": "projector"
-		}
-	]
+        {
+            "name": "server",
+            "path": "server"
+        },
+        {
+            "name": "projector",
+            "path": "projector"
+        },
+        {
+            "path": "controller"
+        }
+    ]
 }

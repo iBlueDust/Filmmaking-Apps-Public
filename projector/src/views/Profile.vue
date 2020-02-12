@@ -88,8 +88,10 @@ export default Vue.extend({
     this.$socket.emit("profile stream start", { profileId: this.id });
 
     setTimeout(() => {
-      this.loading = false;
-      this.error = { message: "Timed out connecting to the server" };
+      if (this.loading) {
+        this.loading = false;
+        this.error = { message: "Timed out connecting to the server" };
+      }
     }, 15000);
   },
   destroyed() {

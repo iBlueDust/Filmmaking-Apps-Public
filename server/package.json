@@ -5,7 +5,11 @@
     "main": "index.js",
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
-        "serve": "nodemon"
+        "serve": "nodemon",
+        "start": "node index.js",
+        "heroku-logs": "heroku logs --tail",
+        "heroku-local": "heroku local web",
+        "heroku-push": "git subtree push --prefix server/ heroku master"
     },
     "keywords": [
         "server",
@@ -23,6 +27,10 @@
         "socket.io": "^2.3.0"
     },
     "devDependencies": {
+        "@types/node": "^13.7.0",
         "nodemon": "^2.0.2"
+    },
+    "engines": {
+        "node": "12.13.1"
     }
 }
