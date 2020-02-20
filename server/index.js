@@ -12,30 +12,32 @@ const FS = require('fs');
 //// CONSTANTS
 const PORT = process.env.PORT || 5000; // This is an ABSOLUTE GIVEN
 
+const SLIDESHOW = 'slideshow';
+const SPLIT = 'split';
+const PROJECTOR_MODES = [SLIDESHOW, SPLIT];
+
+const MAX_PROFILE = 2;
+
+// TODO Better state management
 //// STATE
-const projectors = {}; // Map of <projector client ids, profile ids>
+let projectors = [];
+let projectorMode = 'slideshow'; // Whether to `slideshow` between profiles or `split` the two profiles side by side
 
 let profiles = []; // Complete list with state
 
-let controllers = []; // Controllers with streams
-
 //// METHODS
-function SendProfile(socket, profileId) {
-    const profile = profiles.find(p => p.id === profileId);
+function UpdateProjectors() {
+    console.log('Updating all projectors');
+    Pio.emit('stream', {
+        timestamp: Date.now(),
+        profiles,
+        mode: projectorMode,
+    });
+}
 
-    // Send the data and register the projector
-    if (profile) {
-        socket.emit('profile stream', { timestamp: Date.now(), ...profile });
-        return true;
-    }
-    // ...unless if the profile id is not recognized, return false
-    else {
-        socket.emit('profile stream', {
-            request: data,
-            error: { message: 'The profile id is unrecognized' },
-        });
-        return false;
-    }
+function UpdateControllers() {
+    console.log('Updating all controllers');
+    Cio.emit('stream', { data: profiles, projectors, projectorMode });
 }
 
 //// INT MAIN
@@ -52,91 +54,60 @@ FS.readFile('profiles-list.json', (err, data) => {
 });
 
 //// PROJECTOR
-const Pio = Io; //.of('/projector');
+const Pio = Io.of('/projector');
 
 Pio.on('connection', socket => {
     console.log(`Projector connected     (id: ${socket.id})`);
 
+    projectors.push(socket.id);
+
     // Send updates to all controllers
-    Cio.emit('stream', { data: profiles, projectors });
+    UpdateControllers();
+    socket.emit('stream', {
+        timestamp: Date.now(),
+        profiles,
+        mode: projectorMode,
+    });
 
     // List
-    socket.on('profile list', () => {
+    socket.on('list', () => {
         console.log(`Requested profile list  (id: ${socket.id})`);
-        socket.emit('response profile list', profiles);
-    });
-
-    // Request to start a profile stream
-    socket.on('profile stream start', data => {
-        // Validate request
-        if (data.profileId == null) {
-            socket.emit('profile stream', {
-                request: data,
-                error: { message: 'No profile id was sent' },
-            });
-
-            // Check the profiles list
-        } else {
-            socket.join(data.profileId);
-            if (SendProfile(socket, data.profileId))
-                projectors[socket.id] = data.profileId;
-        }
-    });
-
-    // Request to refresh a profile stream
-    socket.on('profile stream ping', () => {
-        const profileId = projectors[socket.id];
-
-        // If projector is registered, send the profile, else send an error
-        if (profileId) {
-            SendProfile(socket, profileId);
-        } else {
-            socket.emit('profile stream', {
-                error: {
-                    message: 'The client is not registered as a projector',
-                },
-            });
-        }
+        socket.emit('response list', profiles);
     });
 
     socket.on('disconnect', () => {
         console.log(`Projector disconnected  (id: ${socket.id})`);
 
         // Remove from lists
-        if (socket.id && projectors[socket.id]) {
-            socket.leave(projectors[socket.id]);
-            delete projectors[socket.id];
+        projectors = projectors.filter(a => a !== socket.id);
 
-            // Send updates to all controllers
-            Cio.emit('stream', { data: profiles, projectors });
-        }
+        // Send updates to all controllers
+        UpdateControllers();
     });
 });
 
 //// CONTROLLER
 const Cio = Io.of('/controller');
 
-let lastTimestamp = Number.MIN_SAFE_INTEGER;
-
 Cio.on('connection', socket => {
     console.log(`Controller connected    (id: ${socket.id})`);
 
-    // Register controller
-    controllers.push(socket.id);
-    socket.emit('stream', { data: profiles, projectors });
+    // Send initializing data
+    socket.emit('stream', { data: profiles, projectors, projectorMode });
 
+    let updateLastTimestamp = Number.MIN_SAFE_INTEGER;
     socket.on('update', data => {
         const profile = profiles.find(a => a.id === data.profileId);
 
         if (profile) {
             // Update if the data is newer than last data
-            if (lastTimestamp < data.timestamp) {
+            if (updateLastTimestamp < data.timestamp) {
                 // Make sure id is not set again
                 delete data.data.id;
                 Object.assign(profile, data.data);
 
                 // Update projectors
-                SendProfile(Io.to(profile.id), profile.id);
+                UpdateProjectors();
 
                 console.log(`Updated profile by ${socket.id}`);
             }
@@ -149,10 +120,34 @@ Cio.on('connection', socket => {
         }
     });
 
+    let updateProjectorModeLastTimestamp = Number.MIN_SAFE_INTEGER;
+    socket.on('update projectormode', data => {
+        // Check request timestamp;
+        if (data.timestamp < updateProjectorModeLastTimestamp) {
+            console.warn(
+                `Received outdated projector mode update request (id: ${socket.id})`
+            );
+            return;
+        } else updateProjectorModeLastTimestamp = data.timestamp;
+
+        data.mode = data.mode.toLowerCase();
+        if (data.mode && PROJECTOR_MODES.includes(data.mode)) {
+            projectorMode = data.mode;
+            console.log(
+                `Updated projectorMode to ${data.mode} by (id: ${socket.id})`
+            );
+
+            // Don't forget to update all controllers
+            UpdateControllers();
+        } else
+            console.warn(
+                `Error in updating projectorMode to ${data.mode} by (id: ${socket.id})`
+            );
+    });
+
     // Unregister controller
     socket.on('disconnect', () => {
         console.log(`Controller disconnected (id: ${socket.id})`);
-        controllers = controllers.filter(a => a !== socket.id);
     });
 });
 

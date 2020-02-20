@@ -1,9 +1,6 @@
 <template>
 	<section class="panel">
 		<h2>{{ profile.name }}</h2>
-		<h3
-			class="status-display"
-		>{{ projectorCount || 0 }} connected projector{{ projectorCount == 1 ? '' : 's' }}</h3>
 		<h4 class="likes-display">
 			Likes:
 			{{ profile.likes }}
@@ -55,7 +52,6 @@ interface UpdateResponse {
 })
 export default class ProfilePanel extends Vue {
 	@Prop() private profile!: Profile;
-	@Prop() private projectorCount: number;
 
 	private targetLikes = 0;
 	private targetDislikes = 0;
@@ -84,7 +80,7 @@ export default class ProfilePanel extends Vue {
 					);
 				else
 					this.$emit(
-						"console-log",
+						"console-success",
 						`Success: Likes set to ${response.request.data.likes}`
 					);
 			}

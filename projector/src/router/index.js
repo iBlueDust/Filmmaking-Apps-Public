@@ -1,30 +1,28 @@
-import Vue from 'vue'
-import VueRouter from 'vue-router'
-import Home from '../views/Home.vue'
+import Vue from 'vue';
+import VueRouter from 'vue-router';
+import Home from '../views/Home.vue';
 
-Vue.use(VueRouter)
+Vue.use(VueRouter);
 
 const routes = [{
         path: '/',
         name: 'home',
-        component: Home
+        component: Home,
     },
     {
-        path: '/boot/:id',
+        path: '/boot',
         name: 'boot',
-        props: route => ({ id: route.params.id }),
         component: () =>
             import ('@/views/Boot.vue'),
     },
     {
-        path: '/profile/:id',
+        path: '/profile',
         name: 'profile',
-        props: (route) => ({ id: route.params.id, }),
         component: () =>
-            import ('@/views/Profile.vue')
+            import ('@/views/Profile.vue'),
     },
-]
+];
 
 export default new VueRouter({
-    routes
-})
+    routes,
+});
