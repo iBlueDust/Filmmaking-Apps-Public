@@ -121,12 +121,6 @@ export default class App extends Vue {
 }
 </script>
 
-<style lang="scss">
-* {
-	box-sizing: border-box;
-}
-</style>
-
 <style lang="scss" scoped>
 $console-height: 10em;
 

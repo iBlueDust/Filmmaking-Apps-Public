@@ -57,17 +57,24 @@ FS.readFile('profiles-list.json', (err, data) => {
 const Pio = Io.of('/projector');
 
 Pio.on('connection', socket => {
+    function SendToThisProjector() {
+        socket.emit('stream', {
+            timestamp: Date.now(),
+            profiles,
+            mode: projectorMode,
+        });
+    }
+
     console.log(`Projector connected     (id: ${socket.id})`);
 
     projectors.push(socket.id);
 
     // Send updates to all controllers
     UpdateControllers();
-    socket.emit('stream', {
-        timestamp: Date.now(),
-        profiles,
-        mode: projectorMode,
-    });
+    SendToThisProjector();
+
+    // Ping
+    socket.on('stream ping', SendToThisProjector);
 
     // List
     socket.on('list', () => {
@@ -137,8 +144,9 @@ Cio.on('connection', socket => {
                 `Updated projectorMode to ${data.mode} by (id: ${socket.id})`
             );
 
-            // Don't forget to update all controllers
+            // Don't forget to update all controllers and projectors
             UpdateControllers();
+            UpdateProjectors();
         } else
             console.warn(
                 `Error in updating projectorMode to ${data.mode} by (id: ${socket.id})`

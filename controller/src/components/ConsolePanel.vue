@@ -65,6 +65,8 @@ section {
 	position: relative;
 	width: 100%;
 	height: auto;
+	overflow: hidden;
+
 	$padding: 0.5em;
 
 	& > div {

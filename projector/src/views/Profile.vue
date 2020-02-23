@@ -1,41 +1,35 @@
 <template>
-	<div class="main-container">
-		<loader v-if="isLoading" />
-
-		<!-- Show error message if failed to start profile stream -->
-		<p v-else-if="error != null" class="stack error panel">
-			An error occured
-			<br />
-			{{error.message}}
-		</p>
-
-		<!-- Show the main stuff -->
-		<!-- FIXME: Background's backup color (i.e. white is not linked to master.scss) -->
-		<main v-else class="panel stack panel-container horizontal">
-			<div
-				class="image-panel panel panel-container vertical"
-				:style="{ backgroundImage: `url(${profile.image})` }"
-			>
-				<h1
-					class="panel name"
-					:style="profile.imageTextColor ? { 'color': profile.imageTextColor } : ''"
-				>{{ profile.name }}</h1>
-				<article class="panel biography" v-if="profile.biography != null && profile.biography !== ''">
-					<p>{{ profile.biography }}</p>
-				</article>
-			</div>
-			<aside class="panel">
-				<charges-panel class="charges" :charges="profile.charges ||  []" />
-				<stats-panel class="stats" :likes="profile.likes || 0" :dislikes="profile.dislikes || 0" />
-			</aside>
-		</main>
-	</div>
+	<transition name="fade" @after-leave="isTransitioning = false">
+		<div class="main-container" v-if="!isTransitioning">
+			<!-- Show the main stuff -->
+			<!-- FIXME: Background's backup color (i.e. white is not linked to master.scss) -->
+			<main class="panel stack panel-container horizontal">
+				<div
+					class="image-panel panel panel-container vertical"
+					:style="{ backgroundImage: `url(${profile.image})` }"
+				>
+					<h1
+						class="panel name"
+						:style="profile.imageTextColor ? { 'color': profile.imageTextColor } : ''"
+					>{{ profile.name }}</h1>
+					<article class="panel biography" v-if="profile.biography != null && profile.biography !== ''">
+						<p>{{ profile.biography }}</p>
+					</article>
+				</div>
+				<aside class="panel">
+					<charges-panel class="charges" :charges="profile.charges ||  []" />
+					<stats-panel class="stats" :likes="profile.likes || 0" :dislikes="profile.dislikes || 0" />
+				</aside>
+			</main>
+			<disconnection-toast :value="$socket.disconnected" />
+		</div>
+	</transition>
 </template>
 
 <script>
 import ChargesPanel from "@/components/ChargesPanel";
 import StatsPanel from "@/components/StatsPanel";
-import Loader from "@/components/Loader";
+import DisconnectionToast from "@/components/DisconnectionToast";
 
 const SLIDESHOW = "slideshow";
 // eslint-disable-next-line no-unused-vars
@@ -46,26 +40,67 @@ export default {
 	components: {
 		"charges-panel": ChargesPanel,
 		"stats-panel": StatsPanel,
-		loader: Loader
+		"disconnection-toast": DisconnectionToast
+	},
+	props: {
+		interval: {
+			type: Number,
+			default: 10000 // 10 seconds per profile + fade
+		}
 	},
 	data: () => ({
-		isLoading: true,
 		error: null,
 		profiles: [],
-		mode: SLIDESHOW,
+		_mode: SLIDESHOW,
 		currentProfile: 0,
 
-		lastTimestamp: Number.MIN_VALUE
+		lastTimestamp: Number.MIN_VALUE,
+		isTransitioning: false
 	}),
 	computed: {
 		profile() {
 			return this.profiles[this.currentProfile] || {};
+		},
+		mode: {
+			get() {
+				return this._mode;
+			},
+			set(value) {
+				let prevMode = this._mode;
+
+				this._mode = value.toLowerCase();
+
+				if (this._mode === SLIDESHOW && prevMode !== this._mode)
+					this.StartSlideshowCycle();
+			}
 		}
+	},
+	methods: {
+		StartSlideshowCycle() {
+			setInterval(() => {
+				this.isTransitioning = true; // Start transition
+
+				setTimeout(() => {
+					// Increment the current profile index and wrap it
+					if (++this.currentProfile >= this.profiles.length) {
+						this.currentProfile = 0;
+					}
+				}, 1000); // Update UI halfway through the transition
+
+				// this.PingServer(); // Get updated data which would hopefully come within 1 second
+			}, this.interval);
+		},
+		PingServer() {
+			this.$socket.client.emit("stream ping");
+		}
+	},
+	mounted() {
+		this.PingServer();
+		if (this.mode === SLIDESHOW) this.StartSlideshowCycle();
 	},
 	sockets: {
 		stream(response) {
-			this.isLoading = false;
-
+			console.log("stream object");
 			if (response.error) {
 				// Handle the error
 				this.error = response.error;
@@ -91,6 +126,15 @@ export default {
 	display: grid;
 	justify-items: center;
 	align-items: center;
+}
+
+.fade-enter-active,
+.fade-leave-active {
+	transition: opacity 1s ease-in;
+}
+.fade-enter,
+.fade-leave-to {
+	opacity: 0;
 }
 
 .panel-container {
@@ -140,13 +184,20 @@ main.panel {
 	}
 
 	article.biography {
-		margin: 32px auto;
+		margin: 32px 32px;
 		padding: 8px 16px;
+		justify-self: center;
 		font-size: 12px;
 		background: color(card);
 		color: color(text-primary);
 		text-align: center;
-		max-width: 40vw;
+		max-width: 500px;
+
+		@media (min-width: 1024px) {
+			margin: 32px;
+			text-align: left;
+			justify-self: left;
+		}
 	}
 
 	aside.panel {

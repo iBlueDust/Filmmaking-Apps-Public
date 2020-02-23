@@ -11,47 +11,17 @@
 				<p>Jump to the profiles page</p>
 			</a>
 		</main>
-		<section id="toast" :class="{ 'visible': !isConnected }">The server is disconnected</section>
+		<disconnection-toast :value="$socket.disconnected" />
 	</div>
 </template>
 
 <script>
+import DisconnectionToast from "@/components/DisconnectionToast";
+
 export default {
 	name: "Home",
-	data: () => ({
-		socket: {},
-		isConnected: false,
-		profiles: []
-	}),
-	sockets: {
-		connect: function() {
-			console.log("socket connected");
-			this.isConnected = true;
-		},
-		disconnect() {
-			console.warn("socket disconnected");
-			this.isConnected = false;
-		}
-	},
-	mounted() {
-		this.sockets.subscribe("response profile list", data => {
-			this.isLoading = false;
-			this.profiles = data;
-
-			this.sockets.unsubscribe("profile list");
-		});
-		this.$socket.emit("profile list");
-
-		// Set a timeout for profile listing
-		setTimeout(() => {
-			this.isLoading = false;
-
-			this.sockets.unsubscribe("profile list");
-		}, 15000);
-	},
-	destroyed() {
-		// Prevent memory leaks and calls after lifecycle
-		this.sockets.unsubscribe("profile list");
+	components: {
+		"disconnection-toast": DisconnectionToast
 	}
 };
 </script>
@@ -60,22 +30,6 @@ export default {
 @import "@/master.scss";
 
 $card-width: 400px;
-
-#toast {
-	position: absolute;
-	bottom: -5em;
-	right: 1em;
-	background: color(error);
-	border-radius: 4px;
-	color: white;
-	padding: 0.5em 0.75em;
-
-	transition: bottom 0.5s;
-
-	&.visible {
-		bottom: 1em;
-	}
-}
 
 main {
 	color: color(text-primary);
