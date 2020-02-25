@@ -1,34 +1,21 @@
 <template>
-	<transition name="fade" @after-leave="isTransitioning = false">
-		<div class="main-container" v-if="!isTransitioning">
-			<!-- Show the main stuff -->
-			<!-- FIXME: Background's backup color (i.e. white is not linked to master.scss) -->
-			<main class="panel stack panel-container horizontal">
-				<div
-					class="image-panel panel panel-container vertical"
-					:style="{ backgroundImage: `url(${profile.image})` }"
-				>
-					<h1
-						class="panel name"
-						:style="profile.imageTextColor ? { 'color': profile.imageTextColor } : ''"
-					>{{ profile.name }}</h1>
-					<article class="panel biography" v-if="profile.biography != null && profile.biography !== ''">
-						<p>{{ profile.biography }}</p>
-					</article>
-				</div>
-				<aside class="panel">
-					<charges-panel class="charges" :charges="profile.charges ||  []" />
-					<stats-panel class="stats" :likes="profile.likes || 0" :dislikes="profile.dislikes || 0" />
-				</aside>
-			</main>
-			<disconnection-toast :value="$socket.disconnected" />
-		</div>
-	</transition>
+	<div class="main-container">
+		<transition name="fade" mode="out-in">
+			<component
+				v-if="!isTransitioning"
+				class="screen"
+				:is="shownComponent"
+				:profile="profile"
+				:profiles="profiles.filter(a => !a.disabled).splice(0, MAX_SPLIT)"
+			/>
+		</transition>
+		<disconnection-toast :value="$socket.disconnected" />
+	</div>
 </template>
 
 <script>
-import ChargesPanel from "@/components/ChargesPanel";
-import StatsPanel from "@/components/StatsPanel";
+import Slideshow from "@/components/Slideshow";
+import Splitscreen from "@/components/Splitscreen";
 import DisconnectionToast from "@/components/DisconnectionToast";
 
 const SLIDESHOW = "slideshow";
@@ -38,9 +25,9 @@ const SPLIT = "split";
 export default {
 	name: "Profile",
 	components: {
-		"charges-panel": ChargesPanel,
-		"stats-panel": StatsPanel,
-		"disconnection-toast": DisconnectionToast
+		"disconnection-toast": DisconnectionToast,
+		slideshow: Slideshow,
+		splitscreen: Splitscreen
 	},
 	props: {
 		interval: {
@@ -54,6 +41,10 @@ export default {
 		_mode: SLIDESHOW,
 		currentProfile: 0,
 
+		SLIDESHOW: SLIDESHOW,
+		SPLIT: SPLIT,
+		MAX_SPLIT: 3,
+
 		lastTimestamp: Number.MIN_VALUE,
 		isTransitioning: false
 	}),
@@ -63,32 +54,60 @@ export default {
 		},
 		mode: {
 			get() {
-				return this._mode;
+				return this.$data._mode;
 			},
 			set(value) {
-				let prevMode = this._mode;
+				let prevMode = this.$data._mode;
 
-				this._mode = value.toLowerCase();
+				this.$data._mode = value.toLowerCase();
 
-				if (this._mode === SLIDESHOW && prevMode !== this._mode)
+				if (
+					this.$data._mode === SLIDESHOW &&
+					prevMode !== this.$data._mode
+				)
 					this.StartSlideshowCycle();
+				else this.StopSlideshowCycle();
+			}
+		},
+		shownComponent() {
+			switch (this.mode) {
+				case SLIDESHOW:
+					return "slideshow";
+				case SPLIT:
+					return "splitscreen";
+				default:
+					return null;
 			}
 		}
 	},
 	methods: {
 		StartSlideshowCycle() {
+			console.log("Started slideshow cycle");
+
 			setInterval(() => {
+				// Abort if not in slideshow mode
+				if (this.mode !== SLIDESHOW) return;
+
 				this.isTransitioning = true; // Start transition
 
-				setTimeout(() => {
+				this.slideshowCycle = setTimeout(() => {
 					// Increment the current profile index and wrap it
 					if (++this.currentProfile >= this.profiles.length) {
 						this.currentProfile = 0;
 					}
+
+					// Stop transition
+					this.isTransitioning = false;
 				}, 1000); // Update UI halfway through the transition
 
 				// this.PingServer(); // Get updated data which would hopefully come within 1 second
 			}, this.interval);
+		},
+		StopSlideshowCycle() {
+			if (this.slideshowCycle != null) {
+				clearInterval(this.slideshowCycle);
+				console.log("Stopped slideshow cycle");
+			}
 		},
 		PingServer() {
 			this.$socket.client.emit("stream ping");
@@ -96,7 +115,8 @@ export default {
 	},
 	mounted() {
 		this.PingServer();
-		if (this.mode === SLIDESHOW) this.StartSlideshowCycle();
+		// if (this.mode === SLIDESHOW && this.slideshowCycle == null)
+		// 	this.StartSlideshowCycle();
 	},
 	sockets: {
 		stream(response) {
@@ -137,27 +157,6 @@ export default {
 	opacity: 0;
 }
 
-.panel-container {
-	display: grid;
-
-	&.horizontal {
-		grid-template-columns: 1fr 400px;
-		grid-template-rows: auto;
-	}
-	&.vertical {
-		grid-template-columns: auto;
-		grid-template-rows: auto auto;
-		align-content: space-between;
-	}
-}
-
-.stack-container {
-	position: absolute;
-	.stack {
-		position: relative;
-	}
-}
-
 p.error {
 	width: 100%;
 	height: 100%;
@@ -167,47 +166,9 @@ p.error {
 	vertical-align: middle;
 }
 
-main.panel {
+.screen {
+	position: absolute;
 	width: 100%;
 	height: 100%;
-
-	div.image-panel {
-		background-repeat: no-repeat;
-		background-size: cover;
-		background-position: center;
-	}
-
-	.name {
-		margin: 32px;
-		font-size: 5rem;
-		color: color(text-title);
-	}
-
-	article.biography {
-		margin: 32px 32px;
-		padding: 8px 16px;
-		justify-self: center;
-		font-size: 12px;
-		background: color(card);
-		color: color(text-primary);
-		text-align: center;
-		max-width: 500px;
-
-		@media (min-width: 1024px) {
-			margin: 32px;
-			text-align: left;
-			justify-self: left;
-		}
-	}
-
-	aside.panel {
-		height: 100%;
-		display: grid;
-		grid-template-rows: 1fr auto;
-		flex-direction: column;
-
-		background: color(primary);
-		color: color(text-primary);
-	}
 }
 </style>
