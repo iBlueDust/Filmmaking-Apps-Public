@@ -11,6 +11,7 @@
 			/>
 		</transition>
 		<disconnection-toast :value="$socket.disconnected" />
+		<modals-container />
 	</div>
 </template>
 
@@ -18,6 +19,7 @@
 import Slideshow from "@/components/Slideshow";
 import Splitscreen from "@/components/Splitscreen";
 import DisconnectionToast from "@/components/DisconnectionToast";
+import NotificationDialog from "@/components/NotificationDialog";
 
 const SLIDESHOW = "slideshow";
 // eslint-disable-next-line no-unused-vars
@@ -47,11 +49,12 @@ export default {
 		MAX_SPLIT: 3,
 
 		lastTimestamp: Number.MIN_VALUE,
-		isTransitioning: false
+		isTransitioning: false,
+		isNotificationShowing: false
 	}),
 	computed: {
 		profile() {
-			return this.profiles[this.currentProfile] || {};
+			return this.enabledProfiles[this.currentProfile] || {};
 		},
 		mode: {
 			get() {
@@ -96,6 +99,9 @@ export default {
 			return this.profiles
 				.filter(a => !a.disabled)
 				.splice(0, this.MAX_SPLIT);
+		},
+		enabledProfiles() {
+			return this.profiles.filter(a => !a.disabled);
 		}
 	},
 	methods: {
@@ -104,7 +110,10 @@ export default {
 
 			this.slideshowCycle = setInterval(async () => {
 				// Increment the current profile index and wrap it
-				if (++this.currentProfile >= this.profiles.length) {
+				if (
+					this.currentProfile != 0 &&
+					++this.currentProfile >= this.enabledProfiles.length
+				) {
 					this.currentProfile = 0;
 				}
 
@@ -129,32 +138,6 @@ export default {
 				console.log("Stopped slideshow cycle");
 			}
 		},
-		onAddDeleteProfile() {
-			// if (this.mode === SPLIT) {
-			//     console.log('Animating splitscreen');
-			//     await this.Animate();
-			// }
-			// this.Animate();
-		},
-		// Animate() {
-		// 	return new Promise(resolve => {
-		// 		this.isTransitioning = true;
-
-		// 		// const animate = () => {
-		// 		// 	this.isTransitioning = false;
-		// 		// 	cancelAnimationFrame(animate);
-		// 		// };
-		// 		// requestAnimationFrame(animate);
-
-		// 		// resolve();
-
-		// 		setTimeout(() => {
-		// 			this.isTransitioning = false;
-
-		// 			resolve();
-		// 		}, 1000); // Update UI halfway through the transition i.e. 1s
-		// 	});
-		// },
 		PingServer() {
 			this.$socket.client.emit("stream ping");
 		}
@@ -189,6 +172,31 @@ export default {
 				this.profiles = response.profiles || this.profiles;
 				this.mode = (response.mode || this.mode).toLowerCase();
 			}
+		},
+		"notification show"({ title, message }) {
+			if (!this.isNotificationShowing) {
+				this.isNotificationShowing = true;
+
+				// this is not being defined in the function call
+				const component = this;
+
+				this.$modal.show(
+					NotificationDialog,
+					{
+						title,
+						message
+					},
+					{
+						/* modal parameters */
+						height: "auto"
+					},
+					{
+						"before-close"() {
+							component.isNotificationShowing = false;
+						}
+					}
+				);
+			}
 		}
 	}
 };
@@ -202,6 +210,10 @@ export default {
 .fade-enter,
 .fade-leave-to {
 	opacity: 0;
+}
+
+.v--modal-overlay {
+	background: rgba(0, 0, 0, 0.775);
 }
 </style>
 

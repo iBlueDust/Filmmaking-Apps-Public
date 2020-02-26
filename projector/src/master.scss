@@ -10,12 +10,15 @@ $colors: (
     text-like: white,
     text-dislike: white,
 
-    error: #df3030
+    error: #df3030,
+    link: #9E9EFF,
 );
 
 @function color($name) {
     @return map-get($map: $colors, $key: $name);
 }
+
+$border-radius: 8px;
 
 * {
     box-sizing: border-box;

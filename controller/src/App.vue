@@ -7,8 +7,8 @@
 				:class="{ 'online': $socket.connected }"
 			>{{ $socket.connected ? 'ONLINE' : 'OFFLINE' }}</strong>
 			<br />
+			<strong>Connected Projectors: {{ projectorCount }}</strong>
 			<br />
-			<h3>Connected Projectors: {{ projectorCount }}</h3>
 			<br />
 			<form id="projector-mode-form">
 				<strong>Projector Mode: {{ projectorMode || 'N/A' }}</strong>
@@ -21,6 +21,29 @@
 					:value="mode"
 					@click="updateProjectorMode(mode)"
 				/>
+			</form>
+			<br />
+			<br />
+			<form id="notification-form" @submit.prevent="sendNotification">
+				Notification Templates:
+				<select
+					id="notification-template"
+					v-model="notificationTemplate"
+					@change="onNotificationTemplateChange"
+				>
+					<option
+						v-for="(template, index) in notificationTemplates"
+						:key="index"
+						:value="template"
+					>{{ template.name }}</option>
+				</select>
+				<br />Title:
+				<input type="text" name="title" ref="notification-title" v-model="notificationTitle" />
+				<br />Message:
+				<textarea name="message" ref="notification-message" v-model="notificationMessage"></textarea>
+				<br />
+				<input type="submit" value="Send" />
+				<input type="button" value="Hide" @click="hideNotification" />
 			</form>
 		</header>
 		<ConsolePanel ref="console" id="console" :max-lines="20" :lines="[]" />
@@ -45,6 +68,9 @@ import ProfilePanel from "./components/ProfilePanel.vue";
 import ConsolePanel from "./components/ConsolePanel.vue";
 
 import Profile from "./classes/Profile";
+import Notification from "./classes/Notification";
+import { ServerResponse } from "./classes/Server";
+import NotificationTemplates from "./assets/notification-templates.json";
 
 interface StreamObject {
 	data: Profile[];
@@ -60,10 +86,25 @@ interface StreamObject {
 })
 export default class App extends Vue {
 	projectorModes = ["Slideshow", "Split"];
+	notificationTemplates = NotificationTemplates;
 
 	profiles: Profile[] = [];
 	projectorCount = 0;
 	projectorMode: string | undefined;
+
+	notificationTemplate: Notification | undefined;
+	notificationTitle = "";
+	notificationMessage = "";
+
+	created() {
+		if (NotificationTemplates.length >= 1) {
+			const defaultTemplate = NotificationTemplates[0];
+
+			this.notificationTemplate = defaultTemplate;
+			this.notificationTitle = defaultTemplate.title || "";
+			this.notificationMessage = defaultTemplate.message || "";
+		}
+	}
 
 	consoleLog(message: string) {
 		console.log(message);
@@ -88,6 +129,56 @@ export default class App extends Vue {
 			mode: value,
 			timestamp: Date.now()
 		});
+	}
+
+	onNotificationTemplateChange() {
+		if (this.notificationTemplate == null) return;
+
+		this.notificationTitle =
+			this.notificationTemplate.title || this.notificationTitle;
+		this.notificationMessage =
+			this.notificationTemplate.message || this.notificationMessage;
+	}
+
+	sendNotification() {
+		this.$socket.client.emit("notification show", {
+			timestamp: Date.now(),
+			title: this.notificationTitle,
+			message: this.notificationMessage
+		});
+
+		this.$socket.$subscribe(
+			"response notification show",
+			(response: ServerResponse) => {
+				if (response.error) {
+					this.consoleError("Failed to send notification");
+				} else this.consoleSuccess("Notification has been sent");
+
+				this.$socket.$unsubscribe("response notification show");
+			}
+		);
+	}
+
+	hideNotification() {
+		this.$socket.client.emit("notification hide", {
+			timestamp: Date.now(),
+			title: this.notificationTitle,
+			message: this.notificationMessage
+		});
+
+		this.$socket.$subscribe(
+			"response notification hide",
+			(response: ServerResponse) => {
+				if (response.error) {
+					this.consoleError("Failed to hide notification");
+				} else
+					this.consoleSuccess(
+						"Notification has been hidden by server"
+					);
+
+				this.$socket.$unsubscribe("response notification hide");
+			}
+		);
 	}
 
 	@Socket() // --> listens to the event by method name, e.g. `connect`
@@ -161,7 +252,7 @@ $console-height: 10em;
 	#profile-list {
 		grid-area: main;
 		display: grid;
-		grid-template-columns: repeat(auto-fit, minmax(30em, 1fr));
+		grid-template-columns: repeat(auto-fit, minmax(20em, 1fr));
 		justify-content: center;
 		gap: 1em;
 		margin: 1em;

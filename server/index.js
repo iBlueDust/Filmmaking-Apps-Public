@@ -109,6 +109,8 @@ Cio.on('connection', socket => {
         if (profile) {
             // Update if the data is newer than last data
             if (updateLastTimestamp < data.timestamp) {
+                updateLastTimestamp = data.timestamp;
+
                 // Make sure id is not set again
                 delete data.data.id;
                 Object.assign(profile, data.data);
@@ -120,40 +122,53 @@ Cio.on('connection', socket => {
                 // UpdateControllers(); // Try updating all _other_ controllers instead
 
                 console.log(`Updated profile by ${socket.id}`);
+                socket.emit('response update', { request: data, error: null });
+            } else {
+                socket.emit('response update', { request: data, error: { msg: 'Outdated timestamp' } });
+                console.warn(`Received outdated profile update request (id: ${socket.id})`);
             }
-            socket.emit('response update', { request: data, error: null });
         } else {
             socket.emit('response update', {
                 request: data,
-                error: { message: 'Profile id is not recognized' },
+                error: { message: 'Profile ID is not recognized' },
             });
         }
+    });
+
+    // Show/hide a notification request
+    socket.on('notification show', data => {
+        Pio.emit('notification show', data);
+        socket.emit('response notification show', { request: data, error: null });
+    });
+
+    socket.on('notification hide', data => {
+        Pio.emit('notification hide');
+        socket.emit('response notification hide', { request: data, error: null });
+    });
+
+    // Process requests to change routes of all projectors
+    socket.on('route', data => {
+        Pio.emit('route', data);
     });
 
     let updateProjectorModeLastTimestamp = Number.MIN_SAFE_INTEGER;
     socket.on('update projectormode', data => {
         // Check request timestamp;
         if (data.timestamp < updateProjectorModeLastTimestamp) {
-            console.warn(
-                `Received outdated projector mode update request (id: ${socket.id})`
-            );
-            return;
+            console.warn(`Received outdated projector mode update request (id: ${socket.id})`);
+            socket.emit('response update projectormode', { request: data, error: { msg: 'Outdated timestamp' } });
         } else updateProjectorModeLastTimestamp = data.timestamp;
 
         data.mode = data.mode.toLowerCase();
         if (data.mode && PROJECTOR_MODES.includes(data.mode)) {
             projectorMode = data.mode;
-            console.log(
-                `Updated projectorMode to ${data.mode} by (id: ${socket.id})`
-            );
+            console.log(`Updated projectorMode to ${data.mode} by (id: ${socket.id})`);
 
             // Don't forget to update all controllers and projectors
             UpdateControllers();
             UpdateProjectors();
-        } else
-            console.warn(
-                `Error in updating projectorMode to ${data.mode} by (id: ${socket.id})`
-            );
+        } else console.warn(`Error in updating projectorMode to ${data.mode} by (id: ${socket.id})`);
+        socket.emit('response update projectormode', { request: data, error: { msg: 'Invalid projector mode' } });
     });
 
     // Unregister controller

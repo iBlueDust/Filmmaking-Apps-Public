@@ -1,6 +1,7 @@
 import Vue from 'vue';
 import App from './App.vue';
 import router from './router';
+import VModal from 'vue-js-modal';
 import VueSocketIOExt from 'vue-socket.io-extended';
 import Io from 'socket.io-client';
 
@@ -15,6 +16,9 @@ console.log('IP:', serverLocation);
 const socket = Io(serverLocation, { debug: true });
 
 Vue.use(VueSocketIOExt, socket);
+Vue.use(VModal, {
+    dynamic: true,
+});
 
 new Vue({
     router,

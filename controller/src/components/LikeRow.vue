@@ -10,10 +10,8 @@
 			@input="updateInput"
 		/>
 		<button class="set" @click="$emit('set-click')">Set</button>
-		<button class="animate" @click="$emit('animate-click')">Animate</button>
 
 		<button class="add" @click="$emit('add-click')">+1</button>
-		<button class="subtract" @click="$emit('subtract-click')">-1</button>
 	</div>
 </template>
 

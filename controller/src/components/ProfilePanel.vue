@@ -25,6 +25,7 @@
 			label="Dislikes:"
 			:inputTitle="`Set dislikes for ${profile.name}`"
 			v-model="targetDislikes"
+			@set-click="setDislikes"
 		/>
 	</section>
 </template>
@@ -32,20 +33,9 @@
 <script lang="ts">
 import { Component, Prop, Vue } from "vue-property-decorator";
 import LikeRow from "./LikeRow.vue";
+
 import Profile from "../classes/Profile";
-
-interface UpdateRequest {
-	profileId: string;
-	timestamp: number;
-	data: Profile;
-}
-
-interface UpdateResponse {
-	request: UpdateRequest;
-	error: {
-		message: string;
-	};
-}
+import { UpdateRequest, UpdateResponse } from "@/classes/Server";
 
 @Component({
 	components: {
@@ -77,12 +67,30 @@ export default class ProfilePanel extends Vue {
 			);
 	}
 
+	setDislikes() {
+		console.log(`Set dislikes to ${this.targetDislikes}`);
+
+		this.profile.dislikes = this.targetDislikes;
+		this.sendUpdate()
+			.then((response: UpdateResponse) =>
+				this.$emit(
+					"console-error",
+					`Error: Dislikes wasn't set to ${response.request.data.dislikes}\n(${response.error.message})`
+				)
+			)
+			.catch((response: UpdateResponse) =>
+				this.$emit(
+					"console-success",
+					`Success: Dislikes set to ${response.request.data.dislikes}`
+				)
+			);
+	}
+
 	get disabled() {
 		return this.profile.disabled;
 	}
 
 	set disabled(newValue: boolean) {
-		console.trace("set disabled");
 		this.profile.disabled = newValue;
 		console.log(
 			`${newValue ? "Disabling" : "Enabling"} profile ${
@@ -93,18 +101,18 @@ export default class ProfilePanel extends Vue {
 		this.sendUpdate()
 			.then(() =>
 				this.$emit(
-					"console-error",
-					`Error: ${this.profile.name} failed to be ${
-						newValue ? "disabled" : "enabled"
-					}`
-				)
-			)
-			.catch(() =>
-				this.$emit(
 					"console-success",
 					`Success: ${this.profile.name} was ${
 						newValue ? "disabled" : "enabled"
 					}`
+				)
+			)
+			.catch((response: UpdateResponse) =>
+				this.$emit(
+					"console-error",
+					`Error: ${this.profile.name} failed to be ${
+						newValue ? "disabled" : "enabled"
+					} | ${JSON.stringify(response.request)}`
 				)
 			);
 	}
