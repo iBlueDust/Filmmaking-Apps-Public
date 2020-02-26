@@ -1,38 +1,65 @@
 <template>
 	<section :style="{ 'background-image': `url(${profile.image})` }">
-		<div class="overlay">
-			<h1>{{ profile.name }}</h1>
+		<transition name="fade" mode="out-in">
+			<div class="overlay" v-show="show">
+				<h1>{{ profile.name }}</h1>
 
-			<h2 class="like">
-				{{ profile.likes || 0 }}
-				<img src="../assets/drawable/_ionicons_svg_md-heart.svg" />
-			</h2>
-			<h2 class="dislike">
-				{{ profile.dislikes || 0 }}
-				<svg
-					version="1.1"
-					x="0px"
-					y="0px"
-					viewBox="0 0 512 512"
-					style="enable-background:new 0 0 512 512;"
-					xml:space="preserve"
-				>
-					<path
-						class="dislike-path"
-						d="M256,448l-30.2-27.2C118.7,322.4,48,258.6,48,179.1C48,114.2,97.9,64,162.4,64c36.4,0,70.7,16.7,93.6,43.9
+				<h2 class="like">
+					<tween-num
+						:value="profile.likes || 0"
+						:initial="0"
+						:duration="tweenDuration"
+						easing="easeOutQuart"
+					></tween-num>
+					<img src="../assets/drawable/_ionicons_svg_md-heart.svg" />
+				</h2>
+				<h2 class="dislike">
+					<tween-num
+						:value="profile.dislikes || 0"
+						:initial="0"
+						:duration="tweenDuration"
+						easing="easeOutQuart"
+					></tween-num>
+					<svg
+						version="1.1"
+						x="0px"
+						y="0px"
+						viewBox="0 0 512 512"
+						style="enable-background:new 0 0 512 512;"
+						xml:space="preserve"
+					>
+						<path
+							class="dislike-path"
+							d="M256,448l-30.2-27.2C118.7,322.4,48,258.6,48,179.1C48,114.2,97.9,64,162.4,64c36.4,0,70.7,16.7,93.6,43.9
                     C278.9,80.7,313.2,64,349.6,64C414.1,64,464,114.2,464,179.1c0,79.5-70.7,143.3-177.8,241.7L256,448z"
-					/>
-					<line class="dislike-path" x1="71" y1="441" x2="485" y2="27" />
-				</svg>
-			</h2>
-		</div>
+						/>
+						<line class="dislike-path" x1="71" y1="441" x2="485" y2="27" />
+					</svg>
+				</h2>
+			</div>
+		</transition>
 	</section>
 </template>
 
 <script>
+import TweenNumber from "vue-tween-number";
+import { LikesTweenDuration } from "@/constants";
+
 export default {
 	name: "SplitscreenSection",
-	props: ["profile"]
+	components: {
+		"tween-num": TweenNumber
+	},
+	props: {
+		profile: Object,
+		show: {
+			type: Boolean,
+			default: true
+		}
+	},
+	data: () => ({
+		tweenDuration: LikesTweenDuration
+	})
 };
 </script>
 

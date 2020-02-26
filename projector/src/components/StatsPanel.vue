@@ -1,11 +1,11 @@
 <template>
 	<div class="container">
 		<h1 class="like">
-			{{ likes }}
+			<tween-num :value="likes" :initial="likes" :duration="tweenDuration" easing="easeOutQuart"></tween-num>
 			<img src="../assets/drawable/_ionicons_svg_md-heart.svg" />
 		</h1>
 		<h1 class="dislike">
-			{{ dislikes }}
+			<tween-num :value="dislikes" :initial="dislikes" :duration="tweenDuration" easing="easeOutQuart"></tween-num>
 			<svg
 				version="1.1"
 				x="0px"
@@ -27,9 +27,14 @@
 
 <script lang='ts'>
 import Vue from "vue";
+import TweenNumber from "vue-tween-number";
+import { LikesTweenDuration } from "@/constants";
 
 export default Vue.extend({
 	name: "StatsPanel",
+	components: {
+		"tween-num": TweenNumber
+	},
 	props: {
 		likes: {
 			type: Number,
@@ -39,7 +44,10 @@ export default Vue.extend({
 			type: Number,
 			default: 0
 		}
-	}
+	},
+	data: () => ({
+		tweenDuration: LikesTweenDuration
+	})
 });
 </script>
 
@@ -63,7 +71,7 @@ svg .dislike-path {
 }
 
 h1 {
-	font-size: 7rem;
+	font-size: 8em;
 	margin: 0 0 16px 32px;
 	align-items: center;
 	display: flex;
@@ -74,7 +82,7 @@ h1 {
 		background: color(dislike);
 		color: color(text-dislike);
 		text-align: right;
-		font-size: 5rem;
+		font-size: 5em;
 
 		border-top-left-radius: 64px;
 		border-bottom-left-radius: 64px;

@@ -6,6 +6,7 @@
 			min="0"
 			v-bind:title="inputTitle"
 			v-model.number="$data._value"
+			@focus="$event.target.select()"
 			@input="updateInput"
 		/>
 		<button class="set" @click="$emit('set-click')">Set</button>

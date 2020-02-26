@@ -1,12 +1,13 @@
 <template>
 	<div class="main-container">
-		<transition name="fade" mode="out-in">
+		<transition name="fade" mode="out-in" :duration="2000">
 			<component
-				v-if="!isTransitioning"
 				class="screen"
+				v-if="!isTransitioning"
+				:key="componentKey"
 				:is="shownComponent"
 				:profile="profile"
-				:profiles="profiles.filter(a => !a.disabled).splice(0, MAX_SPLIT)"
+				:profiles="splitscreenProfiles"
 			/>
 		</transition>
 		<disconnection-toast :value="$socket.disconnected" />
@@ -70,6 +71,8 @@ export default {
 			}
 		},
 		shownComponent() {
+			// if (this.isTransitioning) return null;
+			// else {
 			switch (this.mode) {
 				case SLIDESHOW:
 					return "slideshow";
@@ -78,37 +81,80 @@ export default {
 				default:
 					return null;
 			}
+			// }
+		},
+		componentKey() {
+			if (this.mode === SLIDESHOW) return this.profile.id;
+			else {
+				return this.splitscreenProfiles.reduce(
+					(acc, val) => acc + val.id,
+					""
+				);
+			}
+		},
+		splitscreenProfiles() {
+			return this.profiles
+				.filter(a => !a.disabled)
+				.splice(0, this.MAX_SPLIT);
 		}
 	},
 	methods: {
 		StartSlideshowCycle() {
 			console.log("Started slideshow cycle");
 
-			setInterval(() => {
-				// Abort if not in slideshow mode
-				if (this.mode !== SLIDESHOW) return;
+			this.slideshowCycle = setInterval(async () => {
+				// Increment the current profile index and wrap it
+				if (++this.currentProfile >= this.profiles.length) {
+					this.currentProfile = 0;
+				}
 
-				this.isTransitioning = true; // Start transition
+				// 	// Abort if not in slideshow mode
+				// 	if (this.mode !== SLIDESHOW) return;
 
-				this.slideshowCycle = setTimeout(() => {
-					// Increment the current profile index and wrap it
-					if (++this.currentProfile >= this.profiles.length) {
-						this.currentProfile = 0;
-					}
+				// 	await this.Animate();
 
-					// Stop transition
-					this.isTransitioning = false;
-				}, 1000); // Update UI halfway through the transition
+				// 	// Increment the current profile index and wrap it
+				// 	if (++this.currentProfile >= this.profiles.length) {
+				// 		this.currentProfile = 0;
+				// 	}
 
-				// this.PingServer(); // Get updated data which would hopefully come within 1 second
+				// 	// this.PingServer(); // Get updated data which would hopefully come within 1 second
 			}, this.interval);
 		},
 		StopSlideshowCycle() {
 			if (this.slideshowCycle != null) {
 				clearInterval(this.slideshowCycle);
+				this.slideshowCycle = null;
+
 				console.log("Stopped slideshow cycle");
 			}
 		},
+		onAddDeleteProfile() {
+			// if (this.mode === SPLIT) {
+			//     console.log('Animating splitscreen');
+			//     await this.Animate();
+			// }
+			// this.Animate();
+		},
+		// Animate() {
+		// 	return new Promise(resolve => {
+		// 		this.isTransitioning = true;
+
+		// 		// const animate = () => {
+		// 		// 	this.isTransitioning = false;
+		// 		// 	cancelAnimationFrame(animate);
+		// 		// };
+		// 		// requestAnimationFrame(animate);
+
+		// 		// resolve();
+
+		// 		setTimeout(() => {
+		// 			this.isTransitioning = false;
+
+		// 			resolve();
+		// 		}, 1000); // Update UI halfway through the transition i.e. 1s
+		// 	});
+		// },
 		PingServer() {
 			this.$socket.client.emit("stream ping");
 		}
@@ -120,7 +166,7 @@ export default {
 	},
 	sockets: {
 		stream(response) {
-			console.log("stream object");
+			console.log("stream object", response);
 			if (response.error) {
 				// Handle the error
 				this.error = response.error;
@@ -129,13 +175,35 @@ export default {
 				// Check if the timestamp is newer than last update
 				// (Default to last value for state)
 			} else if (this.lastTimestamp < response.timestamp) {
-				this.mode = (response.mode || this.mode).toLowerCase();
+				// Detect if a profile as enabled/disabled
+				// const enabledProfiles = response.profiles.filter(
+				// 	a => !a.disabled
+				// );
+
+				// if (
+				// 	this.profiles.filter(a => !a.disabled).length !=
+				// 	enabledProfiles.filter(a => !a.disabled).length
+				// )
+				// 	this.onAddDeleteProfile();
+
 				this.profiles = response.profiles || this.profiles;
+				this.mode = (response.mode || this.mode).toLowerCase();
 			}
 		}
 	}
 };
 </script>
+
+<style lang="scss">
+.fade-enter-active,
+.fade-leave-active {
+	transition: opacity 1s ease-in;
+}
+.fade-enter,
+.fade-leave-to {
+	opacity: 0;
+}
+</style>
 
 <style scoped lang='scss'>
 @import "@/master.scss";
@@ -146,15 +214,6 @@ export default {
 	display: grid;
 	justify-items: center;
 	align-items: center;
-}
-
-.fade-enter-active,
-.fade-leave-active {
-	transition: opacity 1s ease-in;
-}
-.fade-enter,
-.fade-leave-to {
-	opacity: 0;
 }
 
 p.error {

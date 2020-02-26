@@ -113,8 +113,11 @@ Cio.on('connection', socket => {
                 delete data.data.id;
                 Object.assign(profile, data.data);
 
+                // FIXME profile.disabled is somehow initialized to undefined although it is in profiles-list.json
+
                 // Update projectors
                 UpdateProjectors();
+                // UpdateControllers(); // Try updating all _other_ controllers instead
 
                 console.log(`Updated profile by ${socket.id}`);
             }

@@ -54,7 +54,7 @@ export default Vue.extend({
 
 .hooper /deep/ .panel-item {
 	text-align: center;
-	font-size: 1.5em;
+	font-size: 2em;
 	padding: 8px 16px;
 	display: flex;
 	justify-content: center;
@@ -62,7 +62,7 @@ export default Vue.extend({
 }
 
 h3 {
-	font-size: 3rem;
+	font-size: 5em;
 	margin: 0 32px 16px 0;
 	flex: 0 0 auto;
 }
