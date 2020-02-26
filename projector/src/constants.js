@@ -1,0 +1,1 @@
+export const LikesTweenDuration = 1000;

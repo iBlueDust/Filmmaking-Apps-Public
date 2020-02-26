@@ -1,22 +1,20 @@
 import Vue from 'vue';
 import App from './App.vue';
 import router from './router';
+import VueSocketIOExt from 'vue-socket.io-extended';
 import Io from 'socket.io-client';
-import VueSocketIO from 'vue-socket.io';
 
 import serverLocation from '!raw-loader!@/assets/server-ip.txt';
 
 Vue.config.productionTip = false;
 
 console.log('IP:', serverLocation);
-export const Socket = Io(serverLocation, {
-    upgrade: false,
-    reconnection: true,
-    forceNew: false,
-});
 
+// Socket.IO
 // TODO: Turn off debug during production
-Vue.use(new VueSocketIO({ connection: Socket, debug: true }));
+const socket = Io(serverLocation, { debug: true });
+
+Vue.use(VueSocketIOExt, socket);
 
 new Vue({
     router,

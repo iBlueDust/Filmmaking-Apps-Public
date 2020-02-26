@@ -1,15 +1,16 @@
 {
     "folders": [
         {
+            "name": "controller",
+            "path": "controller"
+        },
+        {
             "name": "server",
             "path": "server"
         },
         {
             "name": "projector",
             "path": "projector"
-        },
-        {
-            "path": "controller"
         }
     ]
 }

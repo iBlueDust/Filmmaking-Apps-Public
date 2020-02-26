@@ -4,7 +4,7 @@
 			<p
 				v-for="(line, index) in $data._lines"
 				:key="index"
-				:class="{'error': line.type == ERROR}"
+				:class="{'error': line.type == ERROR, 'success': line.type == SUCCESS}"
 			>{{ line.message }}</p>
 		</div>
 	</section>
@@ -28,8 +28,9 @@ export default class ConsolePanel extends Vue {
 	@Prop() private lines: Line[] = [];
 	@Prop() private maxLines = 20;
 
-	private LOG = 0;
-	private ERROR = 10;
+	private LOG = 0x0;
+	private ERROR = 0x10;
+	private SUCCESS = 0x100;
 
 	_lines = this.lines;
 
@@ -51,6 +52,10 @@ export default class ConsolePanel extends Vue {
 	public error(line: string) {
 		this._log(line, this.ERROR);
 	}
+
+	public success(line: string) {
+		this._log(line, this.SUCCESS);
+	}
 }
 </script>
 
@@ -60,6 +65,8 @@ section {
 	position: relative;
 	width: 100%;
 	height: auto;
+	overflow: hidden;
+
 	$padding: 0.5em;
 
 	& > div {
@@ -76,7 +83,10 @@ section {
 
 		&.error {
 			background: darkred;
-			// color: black;
+		}
+
+		&.success {
+			color: green;
 		}
 	}
 }

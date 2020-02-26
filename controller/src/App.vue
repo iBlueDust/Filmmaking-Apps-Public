@@ -6,6 +6,22 @@
 				id="connection-status"
 				:class="{ 'online': $socket.connected }"
 			>{{ $socket.connected ? 'ONLINE' : 'OFFLINE' }}</strong>
+			<br />
+			<br />
+			<h3>Connected Projectors: {{ projectorCount }}</h3>
+			<br />
+			<form id="projector-mode-form">
+				<strong>Projector Mode: {{ projectorMode || 'N/A' }}</strong>
+				<br />
+				<input
+					type="button"
+					v-for="mode in projectorModes"
+					:key="mode"
+					:name="mode"
+					:value="mode"
+					@click="updateProjectorMode(mode)"
+				/>
+			</form>
 		</header>
 		<ConsolePanel ref="console" id="console" :max-lines="20" :lines="[]" />
 		<article id="profile-list">
@@ -13,8 +29,8 @@
 				v-for="profile in profiles"
 				:key="profile.id"
 				:profile="profile"
-				:projectorCount="projectorCounts[profile.id]"
 				@console-log="consoleLog"
+				@console-success="consoleSuccess"
 				@console-error="consoleError"
 			/>
 		</article>
@@ -32,7 +48,8 @@ import Profile from "./classes/Profile";
 
 interface StreamObject {
 	data: Profile[];
-	projectors: Map<string, string>;
+	projectorMode: string;
+	projectors: string[]; // <Projector ID, Profile ID>
 }
 
 @Component({
@@ -42,17 +59,35 @@ interface StreamObject {
 	}
 })
 export default class App extends Vue {
+	projectorModes = ["Slideshow", "Split"];
+
 	profiles: Profile[] = [];
-	projectorCounts = new Map<string, number>();
+	projectorCount = 0;
+	projectorMode: string | undefined;
 
 	consoleLog(message: string) {
 		console.log(message);
 		(this.$refs.console as ConsolePanel).log(message);
 	}
 
+	consoleSuccess(message: string) {
+		console.log(message);
+		(this.$refs.console as ConsolePanel).success(message);
+	}
+
 	consoleError(message: string) {
 		console.log(message);
 		(this.$refs.console as ConsolePanel).error(message);
+	}
+
+	updateProjectorMode(value: string) {
+		value = value.toLowerCase();
+		this.consoleLog(`Setting projector mode to ${value}`);
+
+		this.$socket.client.emit("update projectormode", {
+			mode: value,
+			timestamp: Date.now()
+		});
 	}
 
 	@Socket() // --> listens to the event by method name, e.g. `connect`
@@ -70,31 +105,26 @@ export default class App extends Vue {
 	onStream(data: StreamObject) {
 		this.profiles = data.data || [];
 
-		if (data.projectors) {
-			this.projectorCounts.clear();
+		// Process projector mode
+		if (data.projectorMode) {
+			this.projectorMode = data.projectorMode.toLowerCase();
+			this.consoleSuccess(
+				`Server: Projector mode was updated to ${this.projectorMode}`
+			);
+		}
 
-			// Iterate over each element and add it to the Map
-			for (const prop in data.projectors) {
-				const profileId = data.projectors[prop];
-				if (this.projectorCounts[profileId])
-					this.projectorCounts[profileId]++;
-				else this.projectorCounts[profileId] = 1;
-			}
+		// Process projectors & ids list
+		if (data.projectors) {
+			this.projectorCount = data.projectors.length;
 		}
 	}
 }
 </script>
 
-<style lang="scss">
-* {
-	box-sizing: border-box;
-}
-</style>
-
 <style lang="scss" scoped>
 $console-height: 10em;
 
-strong {
+#connection-status {
 	color: red;
 	background: transparent;
 
@@ -106,7 +136,7 @@ strong {
 #app {
 	display: grid;
 	grid-template-columns: 50% 50%;
-	grid-template-rows: $console-height 1fr;
+	grid-template-rows: minmax($console-height, auto) 1fr;
 	grid-template-areas:
 		"header console"
 		"main main";
@@ -114,6 +144,14 @@ strong {
 	header {
 		grid-area: header;
 		margin-left: 2em;
+	}
+
+	#projector-mode-form {
+		margin: 0.5em 0;
+
+		& > * {
+			display: inline-block;
+		}
 	}
 
 	#console {
@@ -133,7 +171,7 @@ strong {
 @media screen and (max-width: 768px) {
 	#app {
 		grid-template-columns: auto;
-		grid-template-rows: $console-height auto auto;
+		grid-template-rows: minmax($console-height, auto) auto auto;
 		grid-template-areas:
 			"console"
 			"header"

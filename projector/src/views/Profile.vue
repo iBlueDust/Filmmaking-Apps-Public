@@ -1,180 +1,233 @@
 <template>
-  <div class="main-container">
-    <loader v-if="loading" />
-
-    <!-- Show error message if failed to start profile stream -->
-    <p v-else-if="error != null" class="stack error panel">
-      An error occured
-      <br />
-      {{error.message}}
-    </p>
-
-    <!-- Show the main stuff -->
-    <!-- FIXME: Background's backup color (i.e. white is not linked to master.scss) -->
-    <main v-else class="panel stack panel-container horizontal">
-      <div
-        class="image-panel panel panel-container vertical"
-        :style="{ backgroundImage: `url(${image})` }"
-      >
-        <h1 class="panel name">{{ name }}</h1>
-        <article class="panel biography" v-if="biography != null && biography !== ''">
-          <p>{{ biography }}</p>
-        </article>
-      </div>
-      <aside class="panel">
-        <charges-panel class="charges" :charges="charges" />
-        <stats-panel class="stats" :likes="likes" :dislikes="dislikes" />
-      </aside>
-    </main>
-  </div>
+	<div class="main-container">
+		<transition name="fade" mode="out-in" :duration="2000">
+			<component
+				class="screen"
+				v-if="!isTransitioning"
+				:key="componentKey"
+				:is="shownComponent"
+				:profile="profile"
+				:profiles="splitscreenProfiles"
+			/>
+		</transition>
+		<disconnection-toast :value="$socket.disconnected" />
+	</div>
 </template>
 
-<script lang='ts'>
-import Vue from "vue";
+<script>
+import Slideshow from "@/components/Slideshow";
+import Splitscreen from "@/components/Splitscreen";
+import DisconnectionToast from "@/components/DisconnectionToast";
 
-import ChargesPanel from "@/components/ChargesPanel";
-import StatsPanel from "@/components/StatsPanel";
-import Loader from "@/components/Loader";
+const SLIDESHOW = "slideshow";
+// eslint-disable-next-line no-unused-vars
+const SPLIT = "split";
 
-export default Vue.extend({
-  name: "Profile",
-  components: {
-    "charges-panel": ChargesPanel,
-    "stats-panel": StatsPanel,
-    loader: Loader
-  },
-  props: {
-    id: String
-  },
-  data: () => ({
-    loading: true,
-    error: null,
-    name: "",
-    biography: "",
-    charges: [],
-    likes: 0,
-    dislikes: 0,
-    image: null, // Current image being displayed
+export default {
+	name: "Profile",
+	components: {
+		"disconnection-toast": DisconnectionToast,
+		slideshow: Slideshow,
+		splitscreen: Splitscreen
+	},
+	props: {
+		interval: {
+			type: Number,
+			default: 10000 // 10 seconds per profile + fade
+		}
+	},
+	data: () => ({
+		error: null,
+		profiles: [],
+		_mode: SLIDESHOW,
+		currentProfile: 0,
 
-    lastTimestamp: Number.MIN_VALUE
-  }),
-  created() {
-    if (this.id == null) {
-      this.error = { msg: "No id was specified" };
-      return;
-    }
+		SLIDESHOW: SLIDESHOW,
+		SPLIT: SPLIT,
+		MAX_SPLIT: 3,
 
-    // Request for a profile stream
-    this.sockets.subscribe("profile stream", response => {
-      this.loading = false;
+		lastTimestamp: Number.MIN_VALUE,
+		isTransitioning: false
+	}),
+	computed: {
+		profile() {
+			return this.profiles[this.currentProfile] || {};
+		},
+		mode: {
+			get() {
+				return this.$data._mode;
+			},
+			set(value) {
+				let prevMode = this.$data._mode;
 
-      if (response.error) {
-        // Handle the error
-        this.error = response.error;
-        console.error(response.error);
+				this.$data._mode = value.toLowerCase();
 
-        // Check if the timestamp is newer than last update
-        // (Default to last value for state)
-      } else if (this.lastTimestamp < response.timestamp) {
-        this.name = response.name || this.name;
-        this.biography = response.biography || this.biography;
-        this.charges = response.charges || this.charges;
+				if (
+					this.$data._mode === SLIDESHOW &&
+					prevMode !== this.$data._mode
+				)
+					this.StartSlideshowCycle();
+				else this.StopSlideshowCycle();
+			}
+		},
+		shownComponent() {
+			// if (this.isTransitioning) return null;
+			// else {
+			switch (this.mode) {
+				case SLIDESHOW:
+					return "slideshow";
+				case SPLIT:
+					return "splitscreen";
+				default:
+					return null;
+			}
+			// }
+		},
+		componentKey() {
+			if (this.mode === SLIDESHOW) return this.profile.id;
+			else {
+				return this.splitscreenProfiles.reduce(
+					(acc, val) => acc + val.id,
+					""
+				);
+			}
+		},
+		splitscreenProfiles() {
+			return this.profiles
+				.filter(a => !a.disabled)
+				.splice(0, this.MAX_SPLIT);
+		}
+	},
+	methods: {
+		StartSlideshowCycle() {
+			console.log("Started slideshow cycle");
 
-        this.likes = response.likes || this.likes;
-        this.dislikes = response.dislikes || this.dislikes;
-        this.image = response.image || this.image;
-      }
-    });
-    this.$socket.emit("profile stream start", { profileId: this.id });
+			this.slideshowCycle = setInterval(async () => {
+				// Increment the current profile index and wrap it
+				if (++this.currentProfile >= this.profiles.length) {
+					this.currentProfile = 0;
+				}
 
-    setTimeout(() => {
-      if (this.loading) {
-        this.loading = false;
-        this.error = { message: "Timed out connecting to the server" };
-      }
-    }, 15000);
-  },
-  destroyed() {
-    this.sockets.unsubscribe("profile stream");
-  }
-});
+				// 	// Abort if not in slideshow mode
+				// 	if (this.mode !== SLIDESHOW) return;
+
+				// 	await this.Animate();
+
+				// 	// Increment the current profile index and wrap it
+				// 	if (++this.currentProfile >= this.profiles.length) {
+				// 		this.currentProfile = 0;
+				// 	}
+
+				// 	// this.PingServer(); // Get updated data which would hopefully come within 1 second
+			}, this.interval);
+		},
+		StopSlideshowCycle() {
+			if (this.slideshowCycle != null) {
+				clearInterval(this.slideshowCycle);
+				this.slideshowCycle = null;
+
+				console.log("Stopped slideshow cycle");
+			}
+		},
+		onAddDeleteProfile() {
+			// if (this.mode === SPLIT) {
+			//     console.log('Animating splitscreen');
+			//     await this.Animate();
+			// }
+			// this.Animate();
+		},
+		// Animate() {
+		// 	return new Promise(resolve => {
+		// 		this.isTransitioning = true;
+
+		// 		// const animate = () => {
+		// 		// 	this.isTransitioning = false;
+		// 		// 	cancelAnimationFrame(animate);
+		// 		// };
+		// 		// requestAnimationFrame(animate);
+
+		// 		// resolve();
+
+		// 		setTimeout(() => {
+		// 			this.isTransitioning = false;
+
+		// 			resolve();
+		// 		}, 1000); // Update UI halfway through the transition i.e. 1s
+		// 	});
+		// },
+		PingServer() {
+			this.$socket.client.emit("stream ping");
+		}
+	},
+	mounted() {
+		this.PingServer();
+		// if (this.mode === SLIDESHOW && this.slideshowCycle == null)
+		// 	this.StartSlideshowCycle();
+	},
+	sockets: {
+		stream(response) {
+			console.log("stream object", response);
+			if (response.error) {
+				// Handle the error
+				this.error = response.error;
+				console.error(response.error);
+
+				// Check if the timestamp is newer than last update
+				// (Default to last value for state)
+			} else if (this.lastTimestamp < response.timestamp) {
+				// Detect if a profile as enabled/disabled
+				// const enabledProfiles = response.profiles.filter(
+				// 	a => !a.disabled
+				// );
+
+				// if (
+				// 	this.profiles.filter(a => !a.disabled).length !=
+				// 	enabledProfiles.filter(a => !a.disabled).length
+				// )
+				// 	this.onAddDeleteProfile();
+
+				this.profiles = response.profiles || this.profiles;
+				this.mode = (response.mode || this.mode).toLowerCase();
+			}
+		}
+	}
+};
 </script>
+
+<style lang="scss">
+.fade-enter-active,
+.fade-leave-active {
+	transition: opacity 1s ease-in;
+}
+.fade-enter,
+.fade-leave-to {
+	opacity: 0;
+}
+</style>
 
 <style scoped lang='scss'>
 @import "@/master.scss";
 
 .main-container {
-  width: 100%;
-  height: 100%;
-  display: grid;
-  justify-items: center;
-  align-items: center;
-}
-
-.panel-container {
-  display: grid;
-
-  &.horizontal {
-    grid-template-columns: 1fr 400px;
-    grid-template-rows: auto;
-  }
-  &.vertical {
-    grid-template-columns: auto;
-    grid-template-rows: auto auto;
-    align-content: space-between;
-  }
-}
-
-.stack-container {
-  position: absolute;
-  .stack {
-    position: relative;
-  }
+	width: 100%;
+	height: 100%;
+	display: grid;
+	justify-items: center;
+	align-items: center;
 }
 
 p.error {
-  width: 100%;
-  height: 100%;
-  padding: 5em;
-  color: color(error);
-  text-align: center;
-  vertical-align: middle;
+	width: 100%;
+	height: 100%;
+	padding: 5em;
+	color: color(error);
+	text-align: center;
+	vertical-align: middle;
 }
 
-main.panel {
-  width: 100%;
-  height: 100%;
-
-  div.image-panel {
-    background-repeat: no-repeat;
-    background-size: cover;
-    background-position: center;
-  }
-
-  .name {
-    margin: 32px;
-    font-size: 5rem;
-    color: color(text-title);
-  }
-
-  article.biography {
-    margin: 32px auto;
-    padding: 8px 16px;
-    font-size: 12px;
-    background: color(card);
-    color: color(text-primary);
-    text-align: center;
-    max-width: 40vw;
-  }
-
-  aside.panel {
-    height: 100%;
-    display: grid;
-    grid-template-rows: 1fr auto;
-    flex-direction: column;
-
-    background: color(primary);
-    color: color(text-primary);
-  }
+.screen {
+	position: absolute;
+	width: 100%;
+	height: 100%;
 }
 </style>

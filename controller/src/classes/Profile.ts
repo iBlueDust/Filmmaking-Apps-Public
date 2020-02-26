@@ -5,6 +5,8 @@ export default interface Profile {
     image: string;
     charges: string[];
 
+    disabled: boolean;
+
     likes: number;
     dislikes: number;
 }

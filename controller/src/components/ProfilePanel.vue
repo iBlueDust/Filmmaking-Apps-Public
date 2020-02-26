@@ -1,9 +1,8 @@
 <template>
-	<section class="panel">
+	<section :class="{ 'panel': true, 'disabled': profile.disabled }">
+		<input type="checkbox" id="disabled" v-model="disabled" />
 		<h2>{{ profile.name }}</h2>
-		<h3
-			class="status-display"
-		>{{ projectorCount || 0 }} connected projector{{ projectorCount == 1 ? '' : 's' }}</h3>
+
 		<h4 class="likes-display">
 			Likes:
 			{{ profile.likes }}
@@ -55,7 +54,6 @@ interface UpdateResponse {
 })
 export default class ProfilePanel extends Vue {
 	@Prop() private profile!: Profile;
-	@Prop() private projectorCount: number;
 
 	private targetLikes = 0;
 	private targetDislikes = 0;
@@ -64,31 +62,71 @@ export default class ProfilePanel extends Vue {
 		console.log(`Set likes to ${this.targetLikes}`);
 
 		this.profile.likes = this.targetLikes;
-		this.$socket.client.emit("update", {
-			profileId: this.profile.id,
-			timestamp: Date.now(),
-			data: {
-				likes: this.profile.likes
-			}
-		} as UpdateRequest);
+		this.sendUpdate()
+			.then((response: UpdateResponse) =>
+				this.$emit(
+					"console-error",
+					`Error: Likes wasn't set to ${response.request.data.likes}\n(${response.error.message})`
+				)
+			)
+			.catch((response: UpdateResponse) =>
+				this.$emit(
+					"console-success",
+					`Success: Likes set to ${response.request.data.likes}`
+				)
+			);
+	}
 
-		this.$socket.$subscribe(
-			"response update",
-			(response: UpdateResponse) => {
-				this.$socket.$unsubscribe("response update");
+	get disabled() {
+		return this.profile.disabled;
+	}
 
-				if (response.error)
-					this.$emit(
-						"console-error",
-						`Error: Likes wasn't set to ${response.request.data.likes}\n(${response.error.message})`
-					);
-				else
-					this.$emit(
-						"console-log",
-						`Success: Likes set to ${response.request.data.likes}`
-					);
-			}
+	set disabled(newValue: boolean) {
+		console.trace("set disabled");
+		this.profile.disabled = newValue;
+		console.log(
+			`${newValue ? "Disabling" : "Enabling"} profile ${
+				this.profile.name
+			}`
 		);
+
+		this.sendUpdate()
+			.then(() =>
+				this.$emit(
+					"console-error",
+					`Error: ${this.profile.name} failed to be ${
+						newValue ? "disabled" : "enabled"
+					}`
+				)
+			)
+			.catch(() =>
+				this.$emit(
+					"console-success",
+					`Success: ${this.profile.name} was ${
+						newValue ? "disabled" : "enabled"
+					}`
+				)
+			);
+	}
+
+	async sendUpdate() {
+		return new Promise<UpdateResponse>((resolve, error) => {
+			this.$socket.client.emit("update", {
+				profileId: this.profile.id,
+				timestamp: Date.now(),
+				data: this.profile
+			} as UpdateRequest);
+
+			this.$socket.$subscribe(
+				"response update",
+				(response: UpdateResponse) => {
+					this.$socket.$unsubscribe("response update");
+
+					if (response.error) error(response);
+					else resolve(response);
+				}
+			);
+		});
 	}
 }
 </script>
@@ -98,6 +136,14 @@ section.panel {
 	border: gray 0.5px solid;
 	padding: 2em;
 	width: auto;
+
+	#disabled {
+		float: right;
+	}
+
+	&.disabled {
+		background: gray;
+	}
 
 	h2 {
 		margin-top: 0.25em;
