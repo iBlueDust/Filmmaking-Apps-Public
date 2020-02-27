@@ -42,7 +42,11 @@ export default {
 	},
 	computed: {
 		image() {
-			return this.profile.images[this.profile.imageIndex];
+			return this.profile &&
+				this.profile.images &&
+				this.profile.imageIndex
+				? this.profile.images[this.profile.imageIndex]
+				: null;
 		}
 	}
 };

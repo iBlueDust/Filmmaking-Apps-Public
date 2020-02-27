@@ -10,6 +10,12 @@ import bootAnim from "!raw-loader!@/assets/boot-anim.txt";
 
 export default {
 	name: "Boot",
+	props: {
+		autoPlay: {
+			type: Boolean,
+			default: false
+		}
+	},
 	data: () => ({
 		isConsoleShow: true,
 		content: "",
@@ -125,12 +131,16 @@ export default {
 		}
 	},
 	mounted() {
-		window.addEventListener("keyup", event => {
-			if (event.keyCode == 13)
-				// If enter key is pressed
-				this.boot();
-		});
-		alert("Press ENTER to start the booting");
+		if (this.autoPlay) setTimeout(this.boot, 1000);
+		else {
+			// Listen to an enter keypress
+			window.addEventListener("keyup", event => {
+				if (event.keyCode == 13)
+					// If enter key is pressed
+					this.boot();
+			});
+			alert("Press ENTER to start the booting");
+		}
 	}
 };
 </script>

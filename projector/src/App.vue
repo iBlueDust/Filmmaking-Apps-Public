@@ -4,6 +4,18 @@
 	</div>
 </template>
 
+<script>
+export default {
+	name: "app",
+	sockets: {
+		route(data) {
+			console.log(data);
+			if (data) this.$router.push(data);
+		}
+	}
+};
+</script>
+
 <style lang='scss'>
 @import "./assets/fonts/fonts.css";
 @import "master.scss";

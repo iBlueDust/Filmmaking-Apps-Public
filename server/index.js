@@ -175,8 +175,17 @@ Cio.on('connection', socket => {
     });
 
     // Process requests to change routes of all projectors
+    let routeLastTimestamp = Number.MIN_SAFE_INTEGER;
     socket.on('route', data => {
-        Pio.emit('route', data);
+        if (data.timestamp > routeLastTimestamp) {
+            Pio.emit('route', data);
+
+            socket.emit('response route', { request: data, error: null });
+            console.log(`Routed all projectors to ${data.name}`);
+        } else {
+            socket.emit('response route', { request: data, error: { message: 'Outdated timestamp' } });
+            console.error(`Received route request with outdated timestamp (id: ${socket.id})`);
+        }
     });
 
     let updateProjectorModeLastTimestamp = Number.MIN_SAFE_INTEGER;

@@ -45,6 +45,12 @@
 				<input type="submit" value="Send" />
 				<input type="button" value="Hide" @click="hideNotification" />
 			</form>
+			<br />
+			<br />Route:
+			<button @click="sendRoute('home')">Home</button>
+			<button @click="sendRoute('boot', { query: { auto: true }})">Boot</button>
+			<button @click="sendRoute('profile')">Profile</button>
+			<button @click="sendRoute('medical')">Medical Records</button>
 		</header>
 		<ConsolePanel ref="console" id="console" :max-lines="20" :lines="[]" />
 		<article id="profile-list">
@@ -179,6 +185,31 @@ export default class App extends Vue {
 				this.$socket.$unsubscribe("response notification hide");
 			}
 		);
+	}
+
+	sendRoute(routeName: string, params: object) {
+		this.$socket.client.emit("route", {
+			name: routeName,
+			...params,
+			timestamp: Date.now()
+		});
+
+		this.$socket.$subscribe(
+			"response route",
+			(response: ServerResponse) => {
+				this.$socket.$unsubscribe("response route");
+				if (response.error)
+					this.consoleError(
+						`Failed to send route to ${routeName} (${response.error.message})`
+					);
+				else
+					this.consoleSuccess(
+						`Successfully sent route to ${routeName}`
+					);
+			}
+		);
+
+		setTimeout(() => this.$socket.$unsubscribe("response route"), 30_000);
 	}
 
 	@Socket() // --> listens to the event by method name, e.g. `connect`

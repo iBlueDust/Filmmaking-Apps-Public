@@ -203,6 +203,8 @@ export default class ProfilePanel extends Vue {
 	}
 
 	async sendUpdate() {
+		setTimeout(() => this.$socket.$unsubscribe("response update"), 30_000);
+
 		return new Promise<UpdateResponse>((resolve, error) => {
 			this.$socket.$subscribe(
 				"response update",
