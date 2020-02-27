@@ -1,11 +1,11 @@
 <template>
 	<div class="container">
 		<h1 class="like">
-			<tween-num :value="likes" :initial="likes" :duration="tweenDuration" easing="easeOutQuart"></tween-num>
+			<tween-num :value="likes" :initial="likes" easing="easeOutQuart"></tween-num>
 			<img src="../assets/drawable/_ionicons_svg_md-heart.svg" />
 		</h1>
 		<h1 class="dislike">
-			<tween-num :value="dislikes" :initial="dislikes" :duration="tweenDuration" easing="easeOutQuart"></tween-num>
+			<tween-num :value="dislikes" :initial="dislikes" easing="easeOutQuart"></tween-num>
 			<svg
 				version="1.1"
 				x="0px"

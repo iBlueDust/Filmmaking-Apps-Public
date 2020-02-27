@@ -37,21 +37,48 @@ function UpdateProjectors() {
 
 function UpdateControllers() {
     console.log('Updating all controllers');
-    Cio.emit('stream', { data: profiles, projectors, projectorMode });
+    Cio.emit('stream', { data: profiles, timestamp: Date.now(), projectors, projectorMode });
 }
 
 //// INT MAIN
 
-// Read Json
-FS.readFile('profiles-list.json', (err, data) => {
-    if (err) {
+// Try reading the cache
+if (FS.existsSync('./cache.json')) {
+    try {
+        const data = FS.readFileSync('./cache.json', 'utf-8');
+
+        const parsedData = JSON.parse(data);
+
+        projectorMode = parsedData.projectorMode;
+        profiles = parsedData.profiles;
+
+        console.log('Loaded cache. To invalidate, delete ./cache.json');
+    } catch (err) {
+        console.error(err);
+        ReadProfileTemplates();
+    }
+} else ReadProfileTemplates();
+
+// Else, fallback to profiles-list.json
+const ReadProfileTemplates = () => {
+    try {
+        const data = FS.readFileSync('./profiles-list.json', 'utf-8');
+
+        profiles = JSON.parse(data);
+        console.log('Loaded profiles');
+    } catch (err) {
         console.error(err);
         return;
     }
+};
 
-    profiles = JSON.parse(data);
-    console.log('Loaded profiles');
-});
+// Save loop
+let saveLoop = setInterval(() => {
+    FS.writeFile('./cache.json', JSON.stringify({ projectorMode, profiles }), 'utf-8', (err, result) => {
+        if (err) console.error(err);
+        console.log('Save loop');
+    });
+}, 10000);
 
 //// PROJECTOR
 const Pio = Io.of('/projector');
@@ -100,7 +127,7 @@ Cio.on('connection', socket => {
     console.log(`Controller connected    (id: ${socket.id})`);
 
     // Send initializing data
-    socket.emit('stream', { data: profiles, projectors, projectorMode });
+    socket.emit('stream', { data: profiles, timestamp: -1, projectors, projectorMode });
 
     let updateLastTimestamp = Number.MIN_SAFE_INTEGER;
     socket.on('update', data => {
@@ -124,7 +151,7 @@ Cio.on('connection', socket => {
                 console.log(`Updated profile by ${socket.id}`);
                 socket.emit('response update', { request: data, error: null });
             } else {
-                socket.emit('response update', { request: data, error: { msg: 'Outdated timestamp' } });
+                socket.emit('response update', { request: data, error: { message: 'Outdated timestamp' } });
                 console.warn(`Received outdated profile update request (id: ${socket.id})`);
             }
         } else {
@@ -132,6 +159,7 @@ Cio.on('connection', socket => {
                 request: data,
                 error: { message: 'Profile ID is not recognized' },
             });
+            console.warn(`Received invalid profile id update request (id: ${socket.id})`);
         }
     });
 

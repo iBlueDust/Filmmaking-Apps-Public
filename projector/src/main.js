@@ -18,6 +18,7 @@ const socket = Io(serverLocation, { debug: true });
 Vue.use(VueSocketIOExt, socket);
 Vue.use(VModal, {
     dynamic: true,
+    transition: 'fade',
 });
 
 new Vue({

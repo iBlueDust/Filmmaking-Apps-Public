@@ -1,25 +1,15 @@
 <template>
-	<section :style="{ 'background-image': `url(${profile.image})` }">
-		<transition name="fade" mode="out-in">
+	<transition name="fade" mode="out-in">
+		<section :style="{ 'background-image': `url(${image})` }" :key="image">
 			<div class="overlay" v-show="show">
 				<h1>{{ profile.name }}</h1>
 
 				<h2 class="like">
-					<tween-num
-						:value="profile.likes || 0"
-						:initial="0"
-						:duration="tweenDuration"
-						easing="easeOutQuart"
-					></tween-num>
+					<tween-num :value="profile.likes || 0" :initial="0" easing="easeOutQuart"></tween-num>
 					<img src="../assets/drawable/_ionicons_svg_md-heart.svg" />
 				</h2>
 				<h2 class="dislike">
-					<tween-num
-						:value="profile.dislikes || 0"
-						:initial="0"
-						:duration="tweenDuration"
-						easing="easeOutQuart"
-					></tween-num>
+					<tween-num :value="profile.dislikes || 0" :initial="0" easing="easeOutQuart"></tween-num>
 					<svg
 						version="1.1"
 						x="0px"
@@ -37,8 +27,8 @@
 					</svg>
 				</h2>
 			</div>
-		</transition>
-	</section>
+		</section>
+	</transition>
 </template>
 
 <script>
@@ -51,7 +41,10 @@ export default {
 		"tween-num": TweenNumber
 	},
 	props: {
-		profile: Object,
+		profile: {
+			type: Object,
+			required: true
+		},
 		show: {
 			type: Boolean,
 			default: true
@@ -59,7 +52,12 @@ export default {
 	},
 	data: () => ({
 		tweenDuration: LikesTweenDuration
-	})
+	}),
+	computed: {
+		image() {
+			return this.profile.images[this.profile.imageIndex];
+		}
+	}
 };
 </script>
 

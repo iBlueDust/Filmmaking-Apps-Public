@@ -2,18 +2,21 @@
 	<!-- Show the main stuff -->
 	<!-- FIXME: Background's backup color (i.e. white is not linked to master.scss) -->
 	<main class="panel stack panel-container horizontal">
-		<div
-			class="image-panel panel panel-container vertical"
-			:style="{ backgroundImage: `url(${profile.image})` }"
-		>
-			<h1
-				class="panel name"
-				:style="profile.imageTextColor ? { 'color': profile.imageTextColor } : ''"
-			>{{ profile.name }}</h1>
-			<article class="panel biography" v-if="profile.biography != null && profile.biography !== ''">
-				<p>{{ profile.biography }}</p>
-			</article>
-		</div>
+		<transition name="fade" mode="out-in">
+			<div
+				:key="image"
+				class="image-panel panel panel-container vertical"
+				:style="{ backgroundImage: `url(${image})` }"
+			>
+				<h1
+					class="panel name"
+					:style="profile.imageTextColor ? { 'color': profile.imageTextColor } : ''"
+				>{{ profile.name }}</h1>
+				<article class="panel biography" v-if="profile.biography != null && profile.biography !== ''">
+					<p>{{ profile.biography }}</p>
+				</article>
+			</div>
+		</transition>
 		<aside class="panel">
 			<charges-panel class="charges" :charges="profile.charges ||  []" />
 			<stats-panel class="stats" :likes="profile.likes || 0" :dislikes="profile.dislikes || 0" />
@@ -31,7 +34,17 @@ export default {
 		"charges-panel": ChargesPanel,
 		"stats-panel": StatsPanel
 	},
-	props: ["profile"]
+	props: {
+		profile: {
+			required: true,
+			type: Object
+		}
+	},
+	computed: {
+		image() {
+			return this.profile.images[this.profile.imageIndex];
+		}
+	}
 };
 </script>
 

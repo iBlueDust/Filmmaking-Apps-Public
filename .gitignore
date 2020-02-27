@@ -60,3 +60,6 @@ yarn-error.log*
 *.njsproj
 *.sln
 *.sw?
+
+## SERVER ##
+server/cache.json

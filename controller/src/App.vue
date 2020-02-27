@@ -1,5 +1,5 @@
 <template>
-	<main id="app">
+	<main id="app" :style="$socket.connected ? '' : 'background-color: #FDD'">
 		<header>
 			<h1>Projector Controller v0.1</h1>Status:
 			<strong
@@ -57,6 +57,7 @@
 				@console-error="consoleError"
 			/>
 		</article>
+		<modals-container />
 	</main>
 </template>
 
@@ -141,12 +142,6 @@ export default class App extends Vue {
 	}
 
 	sendNotification() {
-		this.$socket.client.emit("notification show", {
-			timestamp: Date.now(),
-			title: this.notificationTitle,
-			message: this.notificationMessage
-		});
-
 		this.$socket.$subscribe(
 			"response notification show",
 			(response: ServerResponse) => {
@@ -157,6 +152,11 @@ export default class App extends Vue {
 				this.$socket.$unsubscribe("response notification show");
 			}
 		);
+		this.$socket.client.emit("notification show", {
+			timestamp: Date.now(),
+			title: this.notificationTitle,
+			message: this.notificationMessage
+		});
 	}
 
 	hideNotification() {
@@ -211,6 +211,17 @@ export default class App extends Vue {
 	}
 }
 </script>
+
+<style lang="scss">
+.fade-enter-active,
+.fade-leave-active {
+	transition: opacity 1s ease-in;
+}
+.fade-enter,
+.fade-leave-to {
+	opacity: 0;
+}
+</style>
 
 <style lang="scss" scoped>
 $console-height: 10em;
