@@ -42,9 +42,9 @@ export default {
 	},
 	computed: {
 		image() {
-			return this.profile &&
-				this.profile.images &&
-				this.profile.imageIndex
+			return this.profile != null &&
+				this.profile.images != null &&
+				this.profile.imageIndex != null
 				? this.profile.images[this.profile.imageIndex]
 				: null;
 		}

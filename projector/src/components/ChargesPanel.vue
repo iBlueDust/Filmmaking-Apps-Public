@@ -7,7 +7,7 @@
 			:vertical="true"
 			:autoPlay="true"
 			:playSpeed="2000"
-			:itemsToShow="4"
+			:itemsToShow="3"
 			:centerMode="true"
 			:infiniteScroll="true"
 		>

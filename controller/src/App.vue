@@ -271,8 +271,8 @@ $console-height: 10em;
 	grid-template-columns: 50% 50%;
 	grid-template-rows: minmax($console-height, auto) 1fr;
 	grid-template-areas:
-		"header console"
-		"main main";
+		"console main"
+		"header main";
 
 	header {
 		grid-area: header;

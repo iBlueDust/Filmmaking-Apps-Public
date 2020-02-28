@@ -22,6 +22,8 @@
 			:inputTitle="`Set likes for ${profile.name}`"
 			v-model="targetLikes"
 			@set-click="setLikes"
+			@add-click="$data._targetLikes++;setLikes()"
+			@subtract-click="$data._targetLikes--;setLikes()"
 		/>
 
 		<LikeRow
@@ -30,6 +32,8 @@
 			:inputTitle="`Set dislikes for ${profile.name}`"
 			v-model="targetDislikes"
 			@set-click="setDislikes"
+			@add-click="$data._targetDislikes++;setDislikes()"
+			@subtract-click="$data._targetDislikes--;setDislikes()"
 		/>
 
 		<div id="disabled">
@@ -63,7 +67,7 @@ export default class ProfilePanel extends Vue {
 	}
 
 	set targetLikes(value: number) {
-		this.$data._targetLikes = value;
+		this.$data._targetLikes = Math.max(0, value);
 	}
 
 	get targetDislikes() {
@@ -71,51 +75,67 @@ export default class ProfilePanel extends Vue {
 	}
 
 	set targetDislikes(value: number) {
-		this.$data._targetDislikes = value;
+		this.$data._targetDislikes = Math.max(0, value);
 	}
 
 	setLikes() {
 		console.log(`Set likes to ${this.$data._targetLikes}`);
 
-		this.profile.likes = this.$data._targetLikes;
+		this.profile.likes = Math.max(0, this.$data._targetLikes);
 		this.sendUpdate()
 			.then((response: UpdateResponse) =>
 				this.$emit(
-					"console-error",
-					`Error: Likes wasn't set to ${
-						response.request && response.request.data
-							? response.request.data.likes
-							: undefined
-					}\n(${response.error.message})`
-				)
-			)
-			.catch((response: UpdateResponse) =>
-				this.$emit(
 					"console-success",
 					`Success: Likes set to ${
-						response.request && response.request.data
+						response.request != null &&
+						response.request.data != null
 							? response.request.data.likes
 							: undefined
 					}`
 				)
-			);
+			)
+			.catch((response: UpdateResponse) => {
+				this.$emit(
+					"console-error",
+					`Error: Likes wasn't set to ${
+						response.request != null &&
+						response.request.data != null
+							? response.request.data.likes
+							: undefined
+					}\n(${
+						response.error != null
+							? response.error.message
+							: undefined
+					})`
+				);
+			});
 	}
 
 	setDislikes() {
 		console.log(`Set dislikes to ${this.$data._targetDislikes}`);
 
-		this.profile.dislikes = this.$data._targetDislikes;
+		this.profile.dislikes = Math.max(0, this.$data._targetDislikes);
 		this.sendUpdate()
 			.then((response: UpdateResponse) =>
 				this.$emit(
-					"console-error",
-					`Error: Dislikes wasn't set to ${response.request.data.dislikes}\n(${response.error.message})`
+					"console-success",
+					`Success: Dislikes set to ${
+						response.request != null &&
+						response.request.data != null
+							? response.request.data.dislikes
+							: undefined
+					}`
 				)
 			)
 			.catch((response: UpdateResponse) =>
 				this.$emit(
-					"console-success",
-					`Success: Dislikes set to ${response.request.data.dislikes}`
+					"console-error",
+					`Error: Dislikes wasn't set to ${
+						response.request != null &&
+						response.request.data != null
+							? response.request.data.likes
+							: undefined
+					}\n(${response.error.message})`
 				)
 			);
 	}
@@ -143,14 +163,14 @@ export default class ProfilePanel extends Vue {
 						this.sendUpdate()
 							.then(() =>
 								this.$emit(
-									"console-error",
-									`Error: Changing image of ${this.profile.name})`
+									"console-success",
+									`Changed image of ${this.profile.name}`
 								)
 							)
 							.catch(() =>
 								this.$emit(
-									"console-success",
-									`Changed image of ${this.profile.name}`
+									"console-error",
+									`Error: Changing image of ${this.profile.name})`
 								)
 							);
 					} else {
@@ -211,9 +231,10 @@ export default class ProfilePanel extends Vue {
 				(response: UpdateResponse) => {
 					this.$socket.$unsubscribe("response update");
 
-					if (response.error) {
-						error(response);
-					} else resolve(response);
+					if (response.error == null) {
+						console.log(response.request);
+						resolve(response);
+					} else error(response);
 				}
 			);
 			this.$socket.client.emit("update", {
@@ -243,6 +264,7 @@ section.panel {
 		float: right;
 		width: 100%;
 		height: 100%;
+		max-height: 200px;
 		object-fit: cover;
 		overflow: hidden;
 		cursor: pointer;

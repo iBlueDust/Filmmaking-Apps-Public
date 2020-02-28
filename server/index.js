@@ -60,7 +60,7 @@ if (FS.existsSync('./cache.json')) {
 } else ReadProfileTemplates();
 
 // Else, fallback to profiles-list.json
-const ReadProfileTemplates = () => {
+function ReadProfileTemplates() {
     try {
         const data = FS.readFileSync('./profiles-list.json', 'utf-8');
 

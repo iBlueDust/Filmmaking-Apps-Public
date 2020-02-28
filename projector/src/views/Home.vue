@@ -10,6 +10,11 @@
 				<h2>Profile</h2>
 				<p>Jump to the profiles page</p>
 			</a>
+
+			<a @click="$router.push({ name: 'medical' })">
+				<h2>Medical</h2>
+				<p>The medical records of Bill and the Father</p>
+			</a>
 		</main>
 		<disconnection-toast :value="$socket.disconnected" />
 	</div>
