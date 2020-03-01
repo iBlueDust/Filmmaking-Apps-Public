@@ -28,7 +28,7 @@ export default {
 			await this.parseAnim(bootAnim);
 			this.content = "";
 			await this.progressAnim();
-			this.$router.push({ name: "profile" });
+			this.$router.push({ name: "blank" });
 		},
 		async parseAnim(animation) {
 			// Keywords
@@ -90,25 +90,25 @@ export default {
 				500,
 				50,
 				250,
-				400,
+				100,
 				1000,
-				5000,
-				10000,
-				5000,
+				20,
+				100,
 				500,
-				2000,
-				1000,
+				500,
+				200,
+				100,
 				50,
 				10,
 				200,
 				1500,
-				3000,
+				300,
 				200,
 				10,
 				10,
 				25,
 				500,
-				2000
+				200
 			];
 			const LENGTH = DELAYS.length;
 

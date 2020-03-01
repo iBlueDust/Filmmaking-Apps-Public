@@ -1,20 +1,28 @@
 <template>
 	<div class="main-container">
 		<main>
-			<a @click="$router.push({ name: 'boot' })">
+			<router-link :to="{ name: 'boot' }">
 				<h2>Boot</h2>
 				<p>Display the Boot sequence</p>
-			</a>
+			</router-link>
 
-			<a @click="$router.push({ name: 'profile' })">
+			<router-link :to="{ name: 'profile' }">
 				<h2>Profile</h2>
 				<p>Jump to the profiles page</p>
-			</a>
+			</router-link>
 
-			<a @click="$router.push({ name: 'medical' })">
+			<router-link :to="{ name: 'profile.single', query: { id: singleProfileId }}">
+				<h2>Single Profile</h2>
+				<p>Go to a page:</p>
+				<select name="single-profile" v-model="singleProfileId" @click="$event.preventDefault()">
+					<option v-for="profile in profiles" :key="profile.id" :value="profile.id">{{ profile.name }}</option>
+				</select>
+			</router-link>
+
+			<router-link :to="{ name: 'medical' }">
 				<h2>Medical</h2>
 				<p>The medical records of Bill and the Father</p>
-			</a>
+			</router-link>
 		</main>
 		<disconnection-toast :value="$socket.disconnected" />
 	</div>
@@ -27,6 +35,21 @@ export default {
 	name: "Home",
 	components: {
 		"disconnection-toast": DisconnectionToast
+	},
+	data: () => ({
+		profiles: [],
+		singleProfileId: null
+	}),
+	sockets: {
+		connected() {
+			this.mounted();
+		},
+		"response list"(data) {
+			this.profiles = data;
+		}
+	},
+	mounted() {
+		this.$socket.client.emit("list");
 	}
 };
 </script>
@@ -62,21 +85,20 @@ main {
 		width: 100%;
 		max-width: $card-width;
 
-		display: grid;
-		grid-template-rows: auto auto;
-		grid-template-columns: auto;
-		grid-template-areas: "title" "subtitle";
-
 		h2 {
 			margin: 0 0 16px 0;
-			grid-area: title;
 		}
 
 		p {
 			color: #aaa;
 			font-style: italic;
-			margin: 0;
-			grid-area: subtitle;
+			margin: 0 16px 0 0;
+			display: inline-block;
+		}
+
+		select {
+			display: inline-block;
+			width: auto;
 		}
 	}
 }

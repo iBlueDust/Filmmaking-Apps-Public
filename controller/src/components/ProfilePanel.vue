@@ -13,7 +13,13 @@
 					{{ profile.dislikes || 0 }}
 				</h4>
 			</div>
-			<img :src="image" alt :title="image" class="image" @click="showImageSelection" />
+			<img
+				:src="urljoin(serverLocation, image)"
+				alt
+				:title="urljoin(serverLocation, image)"
+				class="image"
+				@click="showImageSelection"
+			/>
 		</div>
 
 		<LikeRow
@@ -22,8 +28,8 @@
 			:inputTitle="`Set likes for ${profile.name}`"
 			v-model="targetLikes"
 			@set-click="setLikes"
-			@add-click="$data._targetLikes++;setLikes()"
-			@subtract-click="$data._targetLikes--;setLikes()"
+			@add-click="targetLikes++;setLikes()"
+			@subtract-click="targetLikes--;setLikes()"
 		/>
 
 		<LikeRow
@@ -32,8 +38,8 @@
 			:inputTitle="`Set dislikes for ${profile.name}`"
 			v-model="targetDislikes"
 			@set-click="setDislikes"
-			@add-click="$data._targetDislikes++;setDislikes()"
-			@subtract-click="$data._targetDislikes--;setDislikes()"
+			@add-click="targetDislikes++;setDislikes()"
+			@subtract-click="targetDislikes--;setDislikes()"
 		/>
 
 		<div id="disabled">
@@ -45,11 +51,14 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from "vue-property-decorator";
+import UrlJoin from "url-join";
+
 import LikeRow from "./LikeRow.vue";
 import ImageSelector from "./ImageSelector.vue";
 
 import Profile from "../classes/Profile";
 import { UpdateRequest, UpdateResponse } from "@/classes/Server";
+import { serverLocation } from "@/main";
 
 @Component({
 	components: {
@@ -61,6 +70,9 @@ export default class ProfilePanel extends Vue {
 
 	private _targetLikes = 0;
 	private _targetDislikes = 0;
+
+	private serverLocation = serverLocation;
+	private urljoin = UrlJoin;
 
 	get targetLikes() {
 		return this.profile.likes || 0;
@@ -133,9 +145,13 @@ export default class ProfilePanel extends Vue {
 					`Error: Dislikes wasn't set to ${
 						response.request != null &&
 						response.request.data != null
-							? response.request.data.likes
+							? response.request.data.dislikes
 							: undefined
-					}\n(${response.error.message})`
+					}\n(${
+						response.error != null
+							? response.error.message
+							: undefined
+					})`
 				)
 			);
 	}
@@ -144,7 +160,8 @@ export default class ProfilePanel extends Vue {
 		this.$modal.show(
 			ImageSelector,
 			{
-				images: this.profile.images
+				images: this.profile.images,
+				imageNames: this.profile.imageNames
 			},
 			{
 				height: "auto",

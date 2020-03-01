@@ -1,12 +1,19 @@
 <template>
 	<div id="app">
-		<router-view />
+		<router-view :key="$route.fullPath" />
+
+		<disconnection-toast :value="$socket.disconnected" />
 	</div>
 </template>
 
 <script>
+import DisconnectionToast from "@/components/DisconnectionToast";
+
 export default {
 	name: "app",
+	components: {
+		"disconnection-toast": DisconnectionToast
+	},
 	sockets: {
 		route(data) {
 			console.log(data);

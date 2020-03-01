@@ -1,7 +1,7 @@
 <template>
 	<main id="app" :style="$socket.connected ? '' : 'background-color: #FDD'">
 		<header>
-			<h1>Projector Controller v0.1</h1>Status:
+			<h1>Projector Controller v1.1</h1>Status:
 			<strong
 				id="connection-status"
 				:class="{ 'online': $socket.connected }"
@@ -47,10 +47,18 @@
 			</form>
 			<br />
 			<br />Route:
+			<button @click="sendRoute('blank')">Blank</button>
 			<button @click="sendRoute('home')">Home</button>
 			<button @click="sendRoute('boot', { query: { auto: true }})">Boot</button>
 			<button @click="sendRoute('profile')">Profile</button>
 			<button @click="sendRoute('medical')">Medical Records</button>
+			<br />Single Profiles:
+			<select name="single-profiles" v-model="singleProfileId">
+				<option v-for="profile in profiles" :key="profile.id" :value="profile.id">{{ profile.name }}</option>
+			</select>
+			<button @click="sendSingleProfileRoute">Go</button>
+
+			<!-- TODO Add option to route to anywhere and to profile.single page -->
 		</header>
 		<ConsolePanel ref="console" id="console" :max-lines="20" :lines="[]" />
 		<article id="profile-list">
@@ -98,6 +106,7 @@ export default class App extends Vue {
 	profiles: Profile[] = [];
 	projectorCount = 0;
 	projectorMode: string | undefined;
+	singleProfileId = null;
 
 	notificationTemplate: Notification | undefined;
 	notificationTitle = "";
@@ -210,6 +219,13 @@ export default class App extends Vue {
 		);
 
 		setTimeout(() => this.$socket.$unsubscribe("response route"), 30_000);
+	}
+
+	sendSingleProfileRoute() {
+		if (this.singleProfileId != null)
+			this.sendRoute("profile.single", {
+				query: { id: this.singleProfileId }
+			});
 	}
 
 	@Socket() // --> listens to the event by method name, e.g. `connect`

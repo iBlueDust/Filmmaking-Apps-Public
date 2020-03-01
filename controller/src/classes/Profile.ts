@@ -4,6 +4,7 @@ export default interface Profile {
 	biography: string;
 	charges: string[];
 	imageIndex: number;
+	imageNames: string[];
 	images: string[];
 
 	disabled: boolean;

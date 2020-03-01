@@ -1,6 +1,6 @@
 <template>
 	<transition name="fade" mode="out-in">
-		<section :style="{ 'background-image': `url(${image})` }" :key="image">
+		<section :style="{ 'background-image': `url(${urljoin(serverLocation, image)}` }" :key="image">
 			<div class="overlay" v-show="show">
 				<h1>{{ profile.name }}</h1>
 
@@ -34,6 +34,8 @@
 <script>
 import TweenNumber from "vue-tween-number";
 import { LikesTweenDuration } from "@/constants";
+import serverLocation from "!raw-loader!@/assets/server-ip.txt";
+import urljoin from "url-join";
 
 export default {
 	name: "SplitscreenSection",
@@ -51,8 +53,12 @@ export default {
 		}
 	},
 	data: () => ({
-		tweenDuration: LikesTweenDuration
+		tweenDuration: LikesTweenDuration,
+		serverLocation
 	}),
+	methods: {
+		urljoin
+	},
 	computed: {
 		image() {
 			return this.profile.images[this.profile.imageIndex];

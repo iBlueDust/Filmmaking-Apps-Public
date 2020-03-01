@@ -6,7 +6,7 @@
 			<div
 				:key="image"
 				class="image-panel panel panel-container vertical"
-				:style="{ backgroundImage: `url(${image})` }"
+				:style="{ backgroundImage: `url(${urljoin(serverLocation, image)})` }"
 			>
 				<h1
 					class="panel name"
@@ -25,6 +25,9 @@
 </template>
 
 <script>
+import serverLocation from "!raw-loader!@/assets/server-ip.txt";
+import urljoin from "url-join";
+
 import ChargesPanel from "@/components/ChargesPanel";
 import StatsPanel from "@/components/StatsPanel";
 
@@ -39,6 +42,12 @@ export default {
 			required: true,
 			type: Object
 		}
+	},
+	data: () => ({
+		serverLocation
+	}),
+	methods: {
+		urljoin
 	},
 	computed: {
 		image() {
@@ -91,6 +100,9 @@ div.image-panel {
 	margin: 32px;
 	font-size: 6em;
 	color: color(text-title);
+
+	-webkit-text-stroke-width: 1px;
+	-webkit-text-stroke-color: black;
 }
 
 article.biography {

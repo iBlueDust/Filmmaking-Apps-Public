@@ -1,24 +1,32 @@
 <template>
 	<div class="container">
 		<div v-for="(image, index) in images" :key="index" @click="selectImage(index)">
-			<img :src="image" :alt="`Image ${index}`" />
+			<img :src="urljoin(serverLocation, image)" :alt="`Image ${index}`" />
 
-			<p>{{ image }}</p>
+			<p v-if="imageNames != null">{{ imageNames[index] || 'N/A' }}</p>
+			<p v-else>N/A</p>
 		</div>
 	</div>
 </template>
 
 <script lang='ts'>
 import { Component, Prop, Vue } from "vue-property-decorator";
+import UrlJoin from "url-join";
+import { serverLocation } from "@/main";
 
 @Component({})
 export default class ImageSelector extends Vue {
 	@Prop() private images!: string[];
+	@Prop() private imageNames!: string[];
+
+	private serverLocation = serverLocation;
 
 	selectImage(index: number) {
 		this.$parent.$emit("selected", index);
 		this.$emit("close");
 	}
+
+	private urljoin = UrlJoin;
 }
 </script>
 

@@ -56,8 +56,8 @@ export default Vue.extend({
 
 .container {
 	background: url("../assets/drawable/bumpy_circle.svg");
-	background-position-x: 101%;
-	background-position-y: 101%;
+	background-size: cover;
+	background-position: 80% 90%;
 	background-repeat: no-repeat;
 	position: relative;
 	min-height: 35vh;

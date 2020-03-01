@@ -3,7 +3,7 @@
 		<transition name="fade" mode="out-in" :duration="2000">
 			<component
 				class="screen"
-				v-if="!isTransitioning"
+				v-if="profile != null"
 				:key="componentKey"
 				:is="shownComponent"
 				:profile="profile"
@@ -49,8 +49,8 @@ export default {
 		MAX_SPLIT: 3,
 
 		lastTimestamp: Number.MIN_VALUE,
-		isTransitioning: false,
-		isNotificationShowing: false
+		isNotificationShowing: false,
+		slideshowCycle: null
 	}),
 	computed: {
 		profile() {
@@ -61,16 +61,11 @@ export default {
 				return this.$data._mode;
 			},
 			set(value) {
-				let prevMode = this.$data._mode;
-
 				this.$data._mode = value.toLowerCase();
 
-				if (
-					this.$data._mode === SLIDESHOW &&
-					prevMode !== this.$data._mode
-				)
-					this.StartSlideshowCycle();
-				else this.StopSlideshowCycle();
+				if (this.$data._mode === SLIDESHOW) {
+					if (this.slideshowCycle == null) this.StartSlideshowCycle();
+				} else this.StopSlideshowCycle();
 			}
 		},
 		shownComponent() {
@@ -108,26 +103,17 @@ export default {
 		StartSlideshowCycle() {
 			console.log("Started slideshow cycle");
 
-			this.slideshowCycle = setInterval(async () => {
+			this.slideshowCycle = setInterval(() => {
+				console.log("cycle");
+
 				// Increment the current profile index and wrap it
+				this.currentProfile++;
 				if (
-					this.currentProfile != 0 &&
-					++this.currentProfile >= this.enabledProfiles.length
+					this.currentProfile < 0 ||
+					this.currentProfile >= this.enabledProfiles.length
 				) {
 					this.currentProfile = 0;
 				}
-
-				// 	// Abort if not in slideshow mode
-				// 	if (this.mode !== SLIDESHOW) return;
-
-				// 	await this.Animate();
-
-				// 	// Increment the current profile index and wrap it
-				// 	if (++this.currentProfile >= this.profiles.length) {
-				// 		this.currentProfile = 0;
-				// 	}
-
-				// 	// this.PingServer(); // Get updated data which would hopefully come within 1 second
 			}, this.interval);
 		},
 		StopSlideshowCycle() {
@@ -135,7 +121,7 @@ export default {
 				clearInterval(this.slideshowCycle);
 				this.slideshowCycle = null;
 
-				console.log("Stopped slideshow cycle");
+				console.trace("Stopped slideshow cycle");
 			}
 		},
 		PingServer() {
@@ -144,10 +130,15 @@ export default {
 	},
 	mounted() {
 		this.PingServer();
-		// if (this.mode === SLIDESHOW && this.slideshowCycle == null)
-		// 	this.StartSlideshowCycle();
+
+		// Start slideshow if in slideshow mode and slideshow isn't already running
+		if (this.mode === SLIDESHOW && this.slideshowCycle == null)
+			this.StartSlideshowCycle();
 	},
 	sockets: {
+		connected() {
+			this.mounted();
+		},
 		stream(response) {
 			console.log("stream object", response);
 			if (response.error) {
@@ -158,17 +149,6 @@ export default {
 				// Check if the timestamp is newer than last update
 				// (Default to last value for state)
 			} else if (this.lastTimestamp < response.timestamp) {
-				// Detect if a profile as enabled/disabled
-				// const enabledProfiles = response.profiles.filter(
-				// 	a => !a.disabled
-				// );
-
-				// if (
-				// 	this.profiles.filter(a => !a.disabled).length !=
-				// 	enabledProfiles.filter(a => !a.disabled).length
-				// )
-				// 	this.onAddDeleteProfile();
-
 				this.profiles = response.profiles || this.profiles;
 				this.mode = (response.mode || this.mode).toLowerCase();
 			}

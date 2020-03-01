@@ -19,8 +19,22 @@ const routes = [{
     {
         path: '/profile',
         name: 'profile',
+        props: route => ({ interval: route.query.interval }),
         component: () =>
             import ('@/views/Profile.vue'),
+    },
+    {
+        path: '/profile/single',
+        name: 'profile.single',
+        props: route => ({ profileId: route.query.id }),
+        component: () =>
+            import ('@/views/SingleProfile.vue'),
+    },
+    {
+        path: '/blank',
+        name: 'blank',
+        component: () =>
+            import ('@/views/Blank.vue'),
     },
     {
         path: '/medical',

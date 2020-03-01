@@ -3,13 +3,15 @@ import App from './App.vue';
 import VueSocketIOExt from 'vue-socket.io-extended';
 import io from 'socket.io-client';
 import VModal from 'vue-js-modal';
+import UrlJoin from 'url-join';
 
-import serverLocation from '!raw-loader!@/assets/server-ip.txt';
+export const serverLocation = 'http://192.168.0.15:5000/';
 
 Vue.use(VModal, { dynamic: true, transition: 'fade' });
 
-console.log(serverLocation);
-const socket = io(serverLocation);
+const location = UrlJoin(serverLocation, '/controller');
+console.log(location);
+const socket = io(location);
 
 Vue.use(VueSocketIOExt, socket);
 

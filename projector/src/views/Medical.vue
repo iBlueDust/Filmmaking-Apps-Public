@@ -1,5 +1,5 @@
 <template>
-	<div class="wrapper">
+	<div id="wrapper">
 		<scale-loader v-if="isLoading" class="loader" color="#0657a3"></scale-loader>
 		<div class="container" v-else>
 			<header>
@@ -22,7 +22,7 @@
 						<p class="id">UJ81839</p>
 						<h2>Henry Lang</h2>
 
-						<img class="profile" src="@/assets/photos/medical/henry.jpg" alt="Henry Lang's Picture" />
+						<img class="profile" src="photos/medical/henry.jpg" alt="Henry Lang's Picture" />
 
 						<table>
 							<tr>
@@ -33,7 +33,7 @@
 							</tr>
 							<tr>
 								<td>Date of Birth:</td>
-								<td>19 March 1969</td>
+								<td>19 March 1975</td>
 							</tr>
 							<tr>
 								<td>Address:</td>
@@ -58,7 +58,7 @@
 						<p class="id">UJ817741</p>
 						<h2>Bill Walters</h2>
 
-						<img class="profile" src="@/assets/photos/medical/bill.jpg" alt="Bill Walter's Picture" />
+						<img class="profile" src="photos/medical/bill.jpg" alt="Bill Walter's Picture" />
 
 						<table>
 							<tr>
@@ -69,7 +69,7 @@
 							</tr>
 							<tr>
 								<td>Date of Birth:</td>
-								<td>5 October 1978</td>
+								<td>5 October 2001</td>
 							</tr>
 							<tr>
 								<td>Address:</td>
@@ -122,12 +122,12 @@ export default {
 		}
 	},
 	async mounted() {
-		await this.sleep(3000);
+		await this.sleep(1000);
 		this.isLoading = false;
 
-		await this.sleep(5000);
+		await this.sleep(2000);
 		const options = {
-			container: "#app",
+			container: "#wrapper",
 			easing: "ease-in-out",
 			offset: -50,
 			force: true,
@@ -136,6 +136,7 @@ export default {
 			y: true
 		};
 
+		console.log("scroll to");
 		VueScrollTo.scrollTo(this.$refs.injuries, 3000, options);
 	}
 };
@@ -152,7 +153,7 @@ h5 {
 	font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
 
-.wrapper {
+#wrapper {
 	width: 100%;
 	height: 100%;
 	overflow-y: auto;
@@ -221,7 +222,7 @@ main {
 
 			img.profile {
 				width: 100%;
-				height: auto;
+				height: 350px;
 			}
 
 			table {

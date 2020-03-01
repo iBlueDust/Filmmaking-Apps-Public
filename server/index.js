@@ -25,19 +25,29 @@ let projectorMode = 'slideshow'; // Whether to `slideshow` between profiles or `
 
 let profiles = []; // Complete list with state
 
+function embeddedProfiles() {
+    return profiles.map(profile => ({
+        ...profile,
+        images: profile.images.map(image => '/' + image),
+        // images: profile.images.map(image => 'data:image/png;base64,' + (imageCache[image] || image)),
+    }));
+}
+
+const imageCache = {};
+
 //// METHODS
 function UpdateProjectors() {
     console.log('Updating all projectors');
     Pio.emit('stream', {
         timestamp: Date.now(),
-        profiles,
+        profiles: embeddedProfiles(),
         mode: projectorMode,
     });
 }
 
 function UpdateControllers() {
     console.log('Updating all controllers');
-    Cio.emit('stream', { data: profiles, timestamp: Date.now(), projectors, projectorMode });
+    Cio.emit('stream', { data: embeddedProfiles(), timestamp: Date.now(), projectors, projectorMode });
 }
 
 //// INT MAIN
@@ -70,7 +80,17 @@ function ReadProfileTemplates() {
         console.error(err);
         return;
     }
-};
+}
+
+//// Read images
+// profiles.forEach((profile, pi) => {
+//     profile.images.forEach((image, ii) => {
+//         try {
+//             const bitmap = FS.readFileSync(image);
+//             imageCache[image] = Buffer.from(bitmap).toString('base64');
+//         } catch (error) {}
+//     });
+// });
 
 // Save loop
 let saveLoop = setInterval(() => {
@@ -87,7 +107,7 @@ Pio.on('connection', socket => {
     function SendToThisProjector() {
         socket.emit('stream', {
             timestamp: Date.now(),
-            profiles,
+            profiles: embeddedProfiles(),
             mode: projectorMode,
         });
     }
@@ -106,7 +126,7 @@ Pio.on('connection', socket => {
     // List
     socket.on('list', () => {
         console.log(`Requested profile list  (id: ${socket.id})`);
-        socket.emit('response list', profiles);
+        socket.emit('response list', embeddedProfiles());
     });
 
     socket.on('disconnect', () => {
@@ -127,7 +147,7 @@ Cio.on('connection', socket => {
     console.log(`Controller connected    (id: ${socket.id})`);
 
     // Send initializing data
-    socket.emit('stream', { data: profiles, timestamp: -1, projectors, projectorMode });
+    socket.emit('stream', { data: embeddedProfiles(), timestamp: -1, projectors, projectorMode });
 
     let updateLastTimestamp = Number.MIN_SAFE_INTEGER;
     socket.on('update', data => {
@@ -138,8 +158,13 @@ Cio.on('connection', socket => {
             if (updateLastTimestamp < data.timestamp) {
                 updateLastTimestamp = data.timestamp;
 
+                // ===== VULNERABILITY =====
+                // Note: If the client sends a string value that's to long (e.g. an embedded base64 image)
+                // The server will crash on the next save loop
+
                 // Make sure id is not set again
                 delete data.data.id;
+                delete data.data.images; // Images can get very very long in length
                 Object.assign(profile, data.data);
 
                 // FIXME profile.disabled is somehow initialized to undefined although it is in profiles-list.json
@@ -220,6 +245,12 @@ http.listen(PORT, () => {
 });
 
 // Serve a public directory
-app.use(Express.static('../controller/dist'));
+app.use('/photos', Express.static(__dirname + '/photos'));
+
+if (process.argv.some(a => a === '--static')) {
+    app.use('/controller', Express.static('../controller/dist'));
+    app.use(Express.static('../projector/dist'));
+}
+
 app.use(Cors());
 app.use(Express.json({ limit: '1mb' }));
