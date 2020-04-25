@@ -1,6 +1,6 @@
 <template>
 	<transition name="fade" mode="out-in">
-		<section :style="{ 'background-image': `url(${urljoin(serverLocation, image)}` }" :key="image">
+		<section :style="{ 'background-image': `url('${urljoin(serverLocation, image)}')` }" :key="image">
 			<div class="overlay" v-show="show">
 				<h1>{{ profile.name }}</h1>
 

@@ -6,7 +6,7 @@
 			<div
 				:key="image"
 				class="image-panel panel panel-container vertical"
-				:style="{ backgroundImage: `url(${urljoin(serverLocation, image)})` }"
+				:style="{ backgroundImage: `url('${urljoin(serverLocation, image)}')` }"
 			>
 				<h1
 					class="panel name"
