@@ -1,32 +1,141 @@
 [
-    {
-        "name": "Lorem Ipsum",
-        "images": [
-            {
-                "label": "Test 1",
-                "src": "test_1.jpg"
-            },
-            {
-                "label": "Test 2",
-                "src": "test_2.jpg"
-            },
-            {
-                "label": "Test 4",
-                "src": "test_3.jpg"
-            }
-        ]
-    },
-    {
-        "name": "Lorem Ipsum 2",
-        "images": [
-            {
-                "label": "Test 1",
-                "src": "test_1.jpg"
-            },
-            {
-                "label": "Test 2",
-                "src": "test_2.jpg"
-            }
-        ]
-    }
+	{
+		"name": "Bill Walters",
+		"images": [
+			{
+				"label": "shot 1",
+				"src": "bill-shot 1.JPG"
+			},
+			{
+				"label": "shot 2_1",
+				"src": "bill-shot 2_1.JPG"
+			},
+			{
+				"label": "shot 2_2",
+				"src": "bill-shot 2_2.JPG"
+			},
+			{
+				"label": "shot 3_1 laid back",
+				"src": "bill-shot 3_1 laid back.JPG"
+			},
+			{
+				"label": "shot 3_2 laid back",
+				"src": "bill-shot 3_2 laid back.JPG"
+			},
+			{
+				"label": "shot 3_3 laid back eye brows",
+				"src": "bill-shot 3_3 laid back eye brows.JPG"
+			},
+			{
+				"label": "shot 4_1 hand out",
+				"src": "bill-shot 4_1 hand out.JPG"
+			},
+			{
+				"label": "shot 4_2 hand out puff",
+				"src": "bill-shot 4_2 hand out puff.JPG"
+			},
+			{
+				"label": "shot 5_1",
+				"src": "bill-shot 5_1.JPG"
+			},
+			{
+				"label": "shot 5_2",
+				"src": "bill-shot 5_2.JPG"
+			},
+			{
+				"label": "shot 6_1 puff",
+				"src": "bill-shot 6_1 puff.JPG"
+			},
+			{
+				"label": "shot 6_2",
+				"src": "bill-shot 6_2.JPG"
+			},
+			{
+				"label": "shot 7_1 mouth open",
+				"src": "bill-shot 7_1 mouth open.JPG"
+			},
+			{
+				"label": "shot 7_2",
+				"src": "bill-shot 7_2.JPG"
+			},
+			{
+				"label": "shot 8_1 judge",
+				"src": "bill-shot 8_1 judge.JPG"
+			},
+			{
+				"label": "shot 8_2 judge",
+				"src": "bill-shot 8_2 judge.JPG"
+			},
+			{
+				"label": "shot 9_1 mouth open",
+				"src": "bill-shot 9_1 mouth open.JPG"
+			},
+			{
+				"label": "shot 9_2",
+				"src": "bill-shot 9_2.JPG"
+			}
+		]
+	},
+	{
+		"name": "Sawyer McCann",
+		"images": [
+			{
+				"label": "back 1",
+				"src": "sawyer-back 1.JPG"
+			},
+			{
+				"label": "back 2",
+				"src": "sawyer-back 2.JPG"
+			},
+			{
+				"label": "close",
+				"src": "sawyer-close.JPG"
+			},
+			{
+				"label": "mugshot",
+				"src": "sawyer-mugshot.jpg"
+			},
+			{
+				"label": "shot 1_1",
+				"src": "sawyer-shot 1_1.JPG"
+			},
+			{
+				"label": "shot 1_2",
+				"src": "sawyer-shot 1_2.JPG"
+			},
+			{
+				"label": "shot 1_3",
+				"src": "sawyer-shot 1_3.JPG"
+			},
+			{
+				"label": "sit 1",
+				"src": "sawyer-sit 1.JPG"
+			},
+			{
+				"label": "sit 2 look down",
+				"src": "sawyer-sit 2 look down.JPG"
+			},
+			{
+				"label": "sit 3 suspicious",
+				"src": "sawyer-sit 3 suspicious.JPG"
+			},
+			{
+				"label": "sit 4 smile",
+				"src": "sawyer-sit 4 smile.JPG"
+			},
+			{
+				"label": "squint 1",
+				"src": "sawyer-squint 1.JPG"
+			}
+		]
+	},
+	{
+		"name": "Mary McCann",
+		"images": [
+			{
+				"label": "Slapper",
+				"src": "mary.jpg"
+			}
+		]
+	}
 ]

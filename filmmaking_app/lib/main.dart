@@ -21,15 +21,8 @@ class MyApp extends StatelessWidget {
         indicatorColor: Colors.green,
         accentColor: Colors.white,
         textTheme: TextTheme(
-          title: TextStyle(
-            fontSize: 48,
-            fontFamily: 'BebasNeue',
-          ),
-          display3: TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 18,
-          ),
-          body2: TextStyle(
+          headline2: TextStyle(fontSize: 48, fontFamily: 'BebasNeue', color: Colors.white),
+          bodyText2: TextStyle(
             color: Colors.grey[700],
           ),
         ),

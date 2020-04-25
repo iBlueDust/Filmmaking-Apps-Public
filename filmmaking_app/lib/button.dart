@@ -5,7 +5,7 @@ import 'package:provider/provider.dart';
 import 'store.dart';
 import 'classes.dart';
 
-class LikeButton extends StatefulWidget {
+class LikeButton extends StatelessWidget {
   final String enabledIcon;
 //   final String disabledIcon;
   final Color enabledColor;
@@ -33,63 +33,44 @@ class LikeButton extends StatefulWidget {
     @required this.vsync,
   }) : super(key: key);
 
-  _LikeButtonState createState() => _LikeButtonState();
-}
-
-class _LikeButtonState extends State<LikeButton> {
   Widget build(BuildContext context) {
-    // final _controller = AnimationController(
-    //   vsync: widget.vsync,
-    //   duration: widget.duration,
-    // );
-    // final _animation = Tween(begin: 0.0, end: 1.0).animate(_controller);
-
-    // _controller.forward();
-
     return SizedBox(
-      width: widget.width,
-      height: widget.height,
+      width: width,
+      height: height,
       child: Semantics(
         button: true,
-        label: widget.semanticLabel,
+        label: semanticLabel,
         child: Consumer<Store>(
           builder: (context, store, _) => FlatButton(
-            splashColor: widget.enabledColor,
+            splashColor: enabledColor,
             onPressed: () {
-              store.mode = store.mode == widget.activeMode ? Mode.None : widget.activeMode;
+              store.mode = store.mode == activeMode ? Mode.None : activeMode;
               //   _controller.forward();
             },
             padding: const EdgeInsets.all(0),
             child: Stack(
-              alignment: widget.alignment,
+              alignment: alignment,
               children: <Widget>[
                 AnimatedContainer(
-                  duration: widget.duration,
-                  decoration: store.mode == widget.activeMode
-                      ? BoxDecoration(color: widget.enabledColor)
+                  duration: duration,
+                  decoration: store.mode == activeMode
+                      ? BoxDecoration(color: enabledColor)
                       : BoxDecoration(
                           color: Colors.transparent,
-                          border: widget.border,
+                          border: border,
                         ),
                 ),
                 AspectRatio(
                   aspectRatio: 1,
                   child: Center(
-                    //   child: FadeTransition(
-                    //     opacity: _animation,
-                    // child: SvgPicture.asset(
-                    //   'assets/vectors/${store.likeMode == widget.activeMode ? widget.enabledIcon : widget.disabledIcon}.svg',
-                    //   width: 64,
-                    //   height: 64,
-                    // ),
                     child: SizedBox(
                       width: 64,
                       height: 64,
                       child: FlareActor(
-                        'assets/vectors/${widget.enabledIcon}.flr',
+                        'assets/vectors/${enabledIcon}.flr',
                         alignment: Alignment.center,
                         fit: BoxFit.contain,
-                        animation: store.mode == widget.activeMode ? 'on' : 'off',
+                        animation: store.mode == activeMode ? 'on' : 'off',
                       ),
                     ),
                   ),

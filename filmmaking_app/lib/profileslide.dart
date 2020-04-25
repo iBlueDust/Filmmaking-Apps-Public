@@ -17,6 +17,12 @@ class _ProfileSlideState extends State<ProfileSlide> with TickerProviderStateMix
   static const Duration _buttonDuration = Duration(milliseconds: 200);
 
   int _imageIndex = 0;
+  List<AssetImage> _imageCache;
+
+  @override
+  void didChangeDependencies() {
+    _imageCache = Provider.of<Store>(context).images.map((e) => AssetImage(e.src)).toList();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -52,17 +58,17 @@ class _ProfileSlideState extends State<ProfileSlide> with TickerProviderStateMix
                   if (store.isInitialized && store.isIndexValid) ...[
                     Text(
                       store.name,
-                      style: theme.textTheme.title,
+                      style: theme.textTheme.headline2,
                     ),
                   ] else if (store.isInitialized) ...[
                     Text(
                       'No profiles are available',
-                      style: theme.textTheme.subtitle,
+                      style: theme.textTheme.subtitle1,
                     )
                   ] else ...[
                     Text(
                       'Loading...',
-                      style: theme.textTheme.subtitle,
+                      style: theme.textTheme.subtitle1,
                     )
                   ]
                 ],
@@ -146,21 +152,18 @@ class _ProfileSlideState extends State<ProfileSlide> with TickerProviderStateMix
   }
 
   Widget _mainImageWidget(BuildContext context, Store store) {
-    if (store.isInitialized) {
-      if (store.images == null || store.images.length <= _imageIndex || _imageIndex < 0)
-        return Center(
-          child: Text(
-            "No images are available",
-            style: Theme.of(context).textTheme.body1,
-          ),
-        );
-      else
-        return Image.asset(
-          store.images[_imageIndex].src,
-          fit: BoxFit.cover,
-        );
-    } else
-      return SizedBox();
+    if (_imageCache.length <= _imageIndex || _imageIndex < 0)
+      return Center(
+        child: Text(
+          "No images are available",
+          style: Theme.of(context).textTheme.bodyText1,
+        ),
+      );
+    else
+      return Image(
+        image: _imageCache[_imageIndex],
+        fit: BoxFit.cover,
+      );
   }
 
   void _showImageDialog(BuildContext context, Store store) {
@@ -168,6 +171,7 @@ class _ProfileSlideState extends State<ProfileSlide> with TickerProviderStateMix
       context: context,
       builder: (context) => ImageSelectDialog(
         images: store.images,
+        imageCache: _imageCache,
         onTap: (_, index) => setState(() => _imageIndex = index),
       ),
     );
