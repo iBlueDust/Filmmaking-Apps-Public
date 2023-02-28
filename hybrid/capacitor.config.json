@@ -1,8 +1,0 @@
-{
-  "appId": "com.peterraozen.filmmaking.hybrid",
-  "appName": "Filmmaking Hybrid App",
-  "bundledWebRuntime": false,
-  "npmClient": "npm",
-  "webDir": "www",
-  "cordova": {}
-}
