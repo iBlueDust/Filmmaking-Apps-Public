@@ -10,7 +10,8 @@ This repo consists of three projects:
 
 Since these props are intended to be film-specific, I doubt many others will find reusability in this. Nevertheless, it can serve as an example of how WebSockets may be used in this manner.
 
-*) WebSockets cannot push 
+> **Note:**
+> This is the public version of the monorepo. Personal information of actors and other persons involved in the production of the film has been replaced with placeholders to protect their identities.
 
 ## Running the projects
 ### Server
