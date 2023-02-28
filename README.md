@@ -3,15 +3,25 @@
 These are digital props required in the shooting of *The Image*, a film made to fulfill the requirements of a high school filmmaking class.
 
 This repo consists of three projects:
-* `controller`: a simple web dashboard to update `projector` live with WebSockets
-* `projector`: a display meant to be projected to a large screen in the movie
-* `mobile`: a mobile app that looks like a social media platform
+* `server`: Receives messages from all `controller`s and pushes them to all `projector`s. Also hosts images for `projector`.
+* `controller`: A simple web dashboard to update `projector` live with WebSockets by sending requests to `server`
+* `projector`: A display meant to be projected to a large screen in the movie
+* `mobile`: A mobile app that looks like a social media platform
 
 Since these props are intended to be film-specific, I doubt many others will find reusability in this. Nevertheless, it can serve as an example of how WebSockets may be used in this manner.
 
+*) WebSockets cannot push 
+
 ## Running the projects
+### Server
+Simple Node.JS server
+```bash
+cd server
+npm i
+npm run start
+```
 ### Controller
-Built on Vue.
+Built on Vue
 ```bash
 cd controller
 npm i
@@ -32,7 +42,7 @@ flutter run -d chrome
 To run it on other platforms, see [Flutter docs](https://docs.flutter.dev/get-started/editor).
 
 ### Projector
-Also a Vue app.
+Also a Vue app
 ```bash
 cd projector
 npm i
@@ -40,6 +50,8 @@ npm run dev
 ```
 
 ## Building the projects
+### Server
+Doesn't apply. [Run the server](#server) instead.
 ### Controller
 ```bash
 npm dev build
